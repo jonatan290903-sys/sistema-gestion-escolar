@@ -58,14 +58,13 @@ export default function InscripcionesPage() {
     ? inscripciones.filter(ins => ins.curso.periodo === selectedYear && ins.estado === 'activo')
     : inscripciones.filter(ins => ins.estado === 'activo');
   const inscritosActuales = new Set(inscripcionesActuales.map(ins => ins.estudiante.id));
-  const estudiantesDisponibles = selectedYearHasStarted
-    ? estudiantes.filter(e => e.estado === 'activo' && !inscritosActuales.has(e.id))
-    : [];
+  const estudiantesDisponibles = estudiantes.filter(e => e.estado === 'activo' && !inscritosActuales.has(e.id));
 
   const openForm = () => { setForm({ estudiante_id: '', curso_id: '' }); setSelectedEstudiante(null); setError(''); setOpen(true); };
 
   const handleSave = async () => {
     if (!form.estudiante_id || !form.curso_id) { setError('Selecciona un estudiante y un curso.'); return; }
+    if (!selectedYearHasStarted) { setError('El año escolar no ha empezado todavía.'); return; }
     setSaving(true); setError('');
     try {
       await courseService.createInscripcion({
@@ -193,10 +192,10 @@ export default function InscripcionesPage() {
                 fullWidth
               />
             )}
-            noOptionsText={selectedYearHasStarted ? 'No hay estudiantes disponibles' : 'Esperando inicio del año escolar'}
+            noOptionsText={selectedYearHasStarted ? 'No hay estudiantes disponibles' : 'No hay estudiantes disponibles'}
           />
           {!selectedYearHasStarted && selectedAnio && (
-            <Alert severity="info">El año escolar {selectedAnio.nombre} inicia el {selectedAnio.fecha_inicio}. Los estudiantes estarán disponibles después de esa fecha.</Alert>
+            <Alert severity="info">El año escolar {selectedAnio.nombre} inicia el {selectedAnio.fecha_inicio}. Puedes buscar estudiantes, pero la inscripción estará habilitada después de esa fecha.</Alert>
           )}
 
           {selectedCurso && !selectedCurso.periodo && (
@@ -204,10 +203,15 @@ export default function InscripcionesPage() {
               Este curso no tiene un período asignado. Configúralo desde la gestión de cursos.
             </Alert>
           )}
+          {!selectedYearHasStarted && selectedAnio && (
+            <Alert severity="warning">
+              El año escolar {selectedAnio.nombre} aún no ha iniciado (comienza el {selectedAnio.fecha_inicio}). No puedes inscribir estudiantes hasta esa fecha.
+            </Alert>
+          )}
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button onClick={() => setOpen(false)}>Cancelar</Button>
-          <Button variant="contained" onClick={handleSave} disabled={saving}>
+          <Button variant="contained" onClick={handleSave} disabled={saving || !selectedYearHasStarted}>
             {saving ? 'Inscribiendo...' : 'Inscribir'}
           </Button>
         </DialogActions>
