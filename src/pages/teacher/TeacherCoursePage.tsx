@@ -427,8 +427,6 @@ function TabAsistencia({ materiaId, claseCursoId }: { materiaId: number; claseCu
 
 // ── Tab 2: Actividades ────────────────────────────────────────────────────────
 
-const emptyActForm = { nombre: '', descripcion: '', tipo: 'tarea', trimestre: 'T1', fecha: '' };
-
 function TabActividades({ cursoId }: { cursoId: number }) {
   const { trimestreActual } = useConfig();
   const emptyActFormDynamic = { nombre: '', descripcion: '', tipo: 'tarea', trimestre: trimestreActual, fecha: '' };
