@@ -4,9 +4,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/School';
 import BookIcon from '@mui/icons-material/Book';
 import PaymentIcon from '@mui/icons-material/Payment';
-import { studentService } from '../services/studentService';
-import { courseService } from '../services/courseService';
-import { paymentService } from '../services/paymentService';
+import { dashboardService } from '../services/dashboardService';
 import { useAuth } from '../contexts/AuthContext';
 
 interface StatCardProps {
@@ -40,20 +38,10 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      studentService.getEstudiantes(),
-      courseService.getDocentes(),
-      courseService.getMaterias(),
-      paymentService.getPagos(),
-    ]).then(([est, doc, mat, pag]) => {
-      setStats({
-        estudiantes: est.length,
-        docentes: doc.length,
-        materias: mat.length,
-        pagos: pag.length,
-        pagosPendientes: pag.filter(p => p.estado === 'pendiente' || p.estado === 'vencido').length,
-      });
-    }).catch(() => {}).finally(() => setLoading(false));
+    dashboardService.getStats()
+      .then(stats => setStats(stats))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) return (
