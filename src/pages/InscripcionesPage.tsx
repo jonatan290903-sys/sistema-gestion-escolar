@@ -6,6 +6,7 @@ import {
   IconButton, Tooltip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { useConfig } from '../contexts/ConfigContext';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { courseService } from '../services/courseService';
@@ -27,6 +28,8 @@ export default function InscripcionesPage() {
   const [form, setForm] = useState({ estudiante_id: '', curso_id: '' });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const { anioActivo, periodoVisor } = useConfig();
+  const selectedYear = periodoVisor || anioActivo?.nombre;
 
   const load = async () => {
     try {
@@ -46,6 +49,12 @@ export default function InscripcionesPage() {
   useEffect(() => { load(); }, []);
 
   const selectedCurso = cursos.find(c => String(c.id) === form.curso_id);
+  const inscripcionesActuales = selectedYear
+    ? inscripciones.filter(ins => ins.curso.periodo === selectedYear)
+    : inscripciones;
+  const inscripcionesParaFiltro = selectedYear ? inscripcionesActuales : inscripciones;
+  const estudiantesDisponibles = estudiantes
+    .filter(e => e.estado === 'activo' && !inscripcionesParaFiltro.some(ins => ins.estudiante.id === e.id));
 
   const openForm = () => { setForm({ estudiante_id: '', curso_id: '' }); setError(''); setOpen(true); };
 
@@ -102,14 +111,14 @@ export default function InscripcionesPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {inscripciones.length === 0 && (
+              {inscripcionesActuales.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={8} align="center" sx={{ py: 5, color: 'text.secondary' }}>
-                    No hay inscripciones registradas
+                    No hay inscripciones registradas para el año {selectedYear ?? 'actual'}
                   </TableCell>
                 </TableRow>
               )}
-              {inscripciones.map(ins => (
+              {inscripcionesActuales.map(ins => (
                 <TableRow key={ins.id} hover>
                   <TableCell sx={{ fontWeight: 500 }}>
                     {ins.estudiante.user.first_name} {ins.estudiante.user.last_name}
@@ -163,9 +172,7 @@ export default function InscripcionesPage() {
             fullWidth
           >
             <MenuItem value=""><em>— Selecciona un estudiante —</em></MenuItem>
-            {estudiantes
-              .filter(e => e.estado === 'activo')
-              .map(e => (
+            {estudiantesDisponibles.map(e => (
                 <MenuItem key={e.id} value={String(e.id)}>
                   {e.user.first_name} {e.user.last_name} — {e.numero_expediente}
                 </MenuItem>
@@ -181,7 +188,7 @@ export default function InscripcionesPage() {
           >
             <MenuItem value=""><em>— Selecciona un curso —</em></MenuItem>
             {cursos
-              .filter(c => c.estado)
+              .filter(c => c.estado && (!selectedYear || c.periodo === selectedYear))
               .map(c => (
                 <MenuItem key={c.id} value={String(c.id)}>
                   {c.nombre}

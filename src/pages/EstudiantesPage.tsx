@@ -3,12 +3,13 @@ import {
   Box, Typography, Button, Card, Table, TableHead,
   TableRow, TableCell, TableBody, Chip, CircularProgress, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  MenuItem, TableContainer, Tooltip, Alert,
+  MenuItem, TableContainer, Tooltip, Alert, FormControlLabel, Switch,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { studentService } from '../services/studentService';
+import { useConfig } from '../contexts/ConfigContext';
 import { Estudiante, Curso } from '../types';
 
 const ESTADO_COLOR: Record<string, any> = {
@@ -25,6 +26,9 @@ export default function EstudiantesPage() {
   const [form, setForm] = useState<any>(emptyForm);
   const [editing, setEditing] = useState<number | null>(null);
   const [error, setError] = useState('');
+  const [filterSinCurso, setFilterSinCurso] = useState(false);
+  const { anioActivo, periodoVisor } = useConfig();
+  const selectedYear = periodoVisor || anioActivo?.nombre;
 
   const load = async () => {
     try {
@@ -39,6 +43,11 @@ export default function EstudiantesPage() {
   useEffect(() => { load(); }, []);
 
   const openCreate = () => { setForm(emptyForm); setEditing(null); setError(''); setOpen(true); };
+  const estudiantesFiltrados = estudiantes.filter((e) => {
+    if (!filterSinCurso) return true;
+    if (!selectedYear) return !e.curso;
+    return !e.curso || e.curso.periodo !== selectedYear;
+  });
   const openEdit = (e: Estudiante) => {
     setForm({ 
       first_name: e.user?.first_name || '',
@@ -78,11 +87,22 @@ export default function EstudiantesPage() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>Estudiantes</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2 }}>
-          Nuevo Estudiante
-        </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 700 }}>Estudiantes</Typography>
+          <Typography variant="body2" color="text.secondary">
+            {selectedYear ? `Año escolar activo: ${selectedYear}` : 'Selecciona un año escolar activo'}
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+          <FormControlLabel
+            control={<Switch checked={filterSinCurso} onChange={e => setFilterSinCurso(e.target.checked)} color="primary" />}
+            label="Solo sin curso en año activo"
+          />
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2 }}>
+            Nuevo Estudiante
+          </Button>
+        </Box>
       </Box>
 
       <Card sx={{ borderRadius: 3, boxShadow: 2 }}>
@@ -99,15 +119,25 @@ export default function EstudiantesPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {estudiantes.length === 0 && (
-                <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>No hay estudiantes registrados</TableCell></TableRow>
+              {estudiantesFiltrados.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                    {filterSinCurso
+                      ? `No hay estudiantes sin curso en el año ${selectedYear ?? 'activo'}`
+                      : 'No hay estudiantes registrados'}
+                  </TableCell>
+                </TableRow>
               )}
-              {estudiantes.map((e) => (
+              {estudiantesFiltrados.map((e) => (
                 <TableRow key={e.id} hover>
                   <TableCell>{e.user.first_name} {e.user.last_name}</TableCell>
                   <TableCell>{e.numero_expediente}</TableCell>
                   <TableCell>{e.documento}</TableCell>
-                  <TableCell>{e.curso?.nombre || '—'}</TableCell>
+                  <TableCell>
+                    {e.curso ? (
+                      e.curso.periodo === selectedYear ? e.curso.nombre : `${e.curso.nombre} (${e.curso.periodo})`
+                    ) : '—'}
+                  </TableCell>
                   <TableCell><Chip label={e.estado} color={ESTADO_COLOR[e.estado]} size="small" /></TableCell>
                   <TableCell align="right">
                     <Tooltip title="Editar"><IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="small" /></IconButton></Tooltip>
