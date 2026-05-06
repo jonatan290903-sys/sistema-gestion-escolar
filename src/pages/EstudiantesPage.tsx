@@ -15,7 +15,7 @@ const ESTADO_COLOR: Record<string, any> = {
   activo: 'success', inactivo: 'default', retirado: 'warning', egresado: 'info',
 };
 
-const emptyForm = { numero_expediente: '', documento: '', fecha_nacimiento: '', curso_id: '', estado: 'activo' };
+const emptyForm = { first_name: '', last_name: '', email: '', numero_expediente: '', documento: '', fecha_nacimiento: '', curso_id: '', estado: 'activo' };
 
 export default function EstudiantesPage() {
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
@@ -40,7 +40,16 @@ export default function EstudiantesPage() {
 
   const openCreate = () => { setForm(emptyForm); setEditing(null); setError(''); setOpen(true); };
   const openEdit = (e: Estudiante) => {
-    setForm({ numero_expediente: e.numero_expediente, documento: e.documento, fecha_nacimiento: e.fecha_nacimiento, curso_id: e.curso?.id || '', estado: e.estado });
+    setForm({ 
+      first_name: e.user?.first_name || '',
+      last_name: e.user?.last_name || '',
+      email: e.user?.email || '',
+      numero_expediente: e.numero_expediente, 
+      documento: e.documento, 
+      fecha_nacimiento: e.fecha_nacimiento, 
+      curso_id: e.curso?.id || '', 
+      estado: e.estado 
+    });
     setEditing(e.id); setError(''); setOpen(true);
   };
 
@@ -115,6 +124,9 @@ export default function EstudiantesPage() {
         <DialogTitle>{editing ? 'Editar Estudiante' : 'Nuevo Estudiante'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
+          <TextField label="Nombres" value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} fullWidth />
+          <TextField label="Apellidos" value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} fullWidth />
+          <TextField label="Email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} fullWidth />
           <TextField label="N° Expediente" value={form.numero_expediente} onChange={e => setForm({ ...form, numero_expediente: e.target.value })} fullWidth />
           <TextField label="Documento" value={form.documento} onChange={e => setForm({ ...form, documento: e.target.value })} fullWidth />
           <TextField label="Fecha de nacimiento" type="date" value={form.fecha_nacimiento} onChange={e => setForm({ ...form, fecha_nacimiento: e.target.value })} fullWidth slotProps={{ inputLabel: { shrink: true } }} />

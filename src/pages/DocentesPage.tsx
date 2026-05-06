@@ -10,7 +10,7 @@ import { courseService } from '../services/courseService';
 import api from '../services/api';
 import { Docente } from '../types';
 
-const emptyForm = { especialidad: '', titulo_profesional: '', documento: '', fecha_contratacion: '', estado: 'activo' };
+const emptyForm = { first_name: '', last_name: '', email: '', especialidad: '', titulo_profesional: '', documento: '', fecha_contratacion: '', estado: 'activo' };
 
 export default function DocentesPage() {
   const [docentes, setDocentes] = useState<Docente[]>([]);
@@ -29,7 +29,16 @@ export default function DocentesPage() {
 
   const openCreate = () => { setForm(emptyForm); setEditing(null); setError(''); setOpen(true); };
   const openEdit = (d: Docente) => {
-    setForm({ especialidad: d.especialidad, titulo_profesional: d.titulo_profesional, documento: d.documento, fecha_contratacion: d.fecha_contratacion, estado: d.estado });
+    setForm({ 
+      first_name: d.user?.first_name || '',
+      last_name: d.user?.last_name || '',
+      email: d.user?.email || '',
+      especialidad: d.especialidad, 
+      titulo_profesional: d.titulo_profesional, 
+      documento: d.documento, 
+      fecha_contratacion: d.fecha_contratacion, 
+      estado: d.estado 
+    });
     setEditing(d.id); setError(''); setOpen(true);
   };
 
@@ -99,6 +108,9 @@ export default function DocentesPage() {
         <DialogTitle>{editing ? 'Editar Docente' : 'Nuevo Docente'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
+          <TextField label="Nombres" value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} fullWidth />
+          <TextField label="Apellidos" value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} fullWidth />
+          <TextField label="Email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} fullWidth />
           <TextField label="Documento" value={form.documento} onChange={e => setForm({ ...form, documento: e.target.value })} fullWidth />
           <TextField label="Especialidad" value={form.especialidad} onChange={e => setForm({ ...form, especialidad: e.target.value })} fullWidth />
           <TextField label="Título Profesional" value={form.titulo_profesional} onChange={e => setForm({ ...form, titulo_profesional: e.target.value })} fullWidth />
