@@ -3,7 +3,7 @@ import {
   Box, Typography, Button, Card, CircularProgress, Dialog, DialogTitle,
   DialogContent, DialogActions, TextField, MenuItem, Alert, Chip,
   Table, TableHead, TableRow, TableCell, TableBody, TableContainer,
-  IconButton, Tooltip,
+  IconButton, Tooltip, Autocomplete,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useConfig } from '../contexts/ConfigContext';
@@ -26,6 +26,7 @@ export default function InscripcionesPage() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ estudiante_id: '', curso_id: '' });
+  const [selectedEstudiante, setSelectedEstudiante] = useState<Estudiante | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const { anioActivo, periodoVisor } = useConfig();
@@ -56,7 +57,7 @@ export default function InscripcionesPage() {
   const estudiantesDisponibles = estudiantes
     .filter(e => e.estado === 'activo' && !inscripcionesParaFiltro.some(ins => ins.estudiante.id === e.id));
 
-  const openForm = () => { setForm({ estudiante_id: '', curso_id: '' }); setError(''); setOpen(true); };
+  const openForm = () => { setForm({ estudiante_id: '', curso_id: '' }); setSelectedEstudiante(null); setError(''); setOpen(true); };
 
   const handleSave = async () => {
     if (!form.estudiante_id || !form.curso_id) { setError('Selecciona un estudiante y un curso.'); return; }
@@ -164,20 +165,31 @@ export default function InscripcionesPage() {
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
 
-          <TextField
-            select
-            label="Estudiante"
-            value={form.estudiante_id}
-            onChange={e => setForm({ ...form, estudiante_id: e.target.value })}
-            fullWidth
-          >
-            <MenuItem value=""><em>— Selecciona un estudiante —</em></MenuItem>
-            {estudiantesDisponibles.map(e => (
-                <MenuItem key={e.id} value={String(e.id)}>
-                  {e.user.first_name} {e.user.last_name} — {e.numero_expediente}
-                </MenuItem>
-              ))}
-          </TextField>
+          <Autocomplete
+            options={estudiantesDisponibles}
+            value={selectedEstudiante}
+            onChange={(_, value) => {
+              setSelectedEstudiante(value);
+              setForm({ ...form, estudiante_id: value ? String(value.id) : '' });
+            }}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            getOptionLabel={(option) => `${option.user.first_name} ${option.user.last_name} — ${option.numero_expediente}`}
+            filterOptions={(options, { inputValue }) => options.filter(o => {
+              const label = `${o.user.first_name} ${o.user.last_name}`.toLowerCase();
+              const labelReverse = `${o.user.last_name} ${o.user.first_name}`.toLowerCase();
+              const term = inputValue.toLowerCase();
+              return label.includes(term) || labelReverse.includes(term) || o.numero_expediente.includes(term);
+            })}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Estudiante"
+                placeholder="Busca por nombre o expediente"
+                fullWidth
+              />
+            )}
+            noOptionsText="No hay estudiantes disponibles"
+          />
 
           <TextField
             select
