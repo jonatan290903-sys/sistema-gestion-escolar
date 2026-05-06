@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import api from '../services/api';
+import { useAuth } from './AuthContext';
 
 export interface Trimestre {
   id: number;
@@ -44,8 +45,14 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
   const [trimestreActual, setTrimestreActual] = useState<'T1' | 'T2' | 'T3'>('T1');
   const [periodoVisor, setPeriodoVisor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   const refresh = useCallback(async () => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const [configRes, aniosRes] = await Promise.all([
@@ -60,9 +67,12 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
-  useEffect(() => { refresh(); }, [refresh]);
+  useEffect(() => {
+    if (authLoading) return;
+    refresh();
+  }, [authLoading, refresh]);
 
   return (
     <ConfigContext.Provider value={{
