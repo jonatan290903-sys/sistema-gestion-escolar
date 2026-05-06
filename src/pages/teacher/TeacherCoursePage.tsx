@@ -14,6 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import DownloadIcon from '@mui/icons-material/Download';
 import { courseService } from '../../services/courseService';
+import { useConfig } from '../../contexts/ConfigContext';
 import {
   Materia, Estudiante, Actividad, EstadoAsistencia,
   ResumenAsistencia, CentroNotas, HorarioCurso, Asistencia,
@@ -429,10 +430,12 @@ function TabAsistencia({ materiaId, claseCursoId }: { materiaId: number; claseCu
 const emptyActForm = { nombre: '', descripcion: '', tipo: 'tarea', trimestre: 'T1', fecha: '' };
 
 function TabActividades({ cursoId }: { cursoId: number }) {
+  const { trimestreActual } = useConfig();
+  const emptyActFormDynamic = { nombre: '', descripcion: '', tipo: 'tarea', trimestre: trimestreActual, fecha: '' };
   const [actividades, setActividades] = useState<Actividad[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<any>(emptyActForm);
+  const [form, setForm] = useState<any>(emptyActFormDynamic);
   const [editing, setEditing] = useState<number | null>(null);
   const [error, setError] = useState('');
 
@@ -484,7 +487,7 @@ function TabActividades({ cursoId }: { cursoId: number }) {
   return (
     <Box>
       <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(emptyActForm); setEditing(null); setError(''); setOpen(true); }}>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(emptyActFormDynamic); setEditing(null); setError(''); setOpen(true); }}>
           Nueva Actividad
         </Button>
       </Box>
@@ -572,7 +575,8 @@ function TabActividades({ cursoId }: { cursoId: number }) {
 // ── Tab 3: Centro de Notas ─────────────────────────────────────────────────────
 
 function TabCentroNotas({ cursoId }: { cursoId: number }) {
-  const [trimestre, setTrimestre] = useState<string>('T1');
+  const { trimestreActual } = useConfig();
+  const [trimestre, setTrimestre] = useState<string>(trimestreActual);
   const [data, setData] = useState<CentroNotas | null>(null);
   const [editingCell, setEditingCell] = useState<{ estId: number; actId: number } | null>(null);
   const [cellValue, setCellValue] = useState('');

@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { createTheme, ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ConfigProvider } from './contexts/ConfigContext';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
 
@@ -20,6 +21,7 @@ const TeacherDashboard = lazy(() => import('./pages/teacher/TeacherDashboard'));
 const TeacherCoursePage = lazy(() => import('./pages/teacher/TeacherCoursePage'));
 const StudentPortalPage = lazy(() => import('./pages/student/StudentPortalPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const AnioAcademicoPage = lazy(() => import('./pages/AnioAcademicoPage'));
 
 const theme = createTheme({
   palette: {
@@ -58,40 +60,43 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <BrowserRouter>
-          <Suspense fallback={<Loading />}>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
+        <ConfigProvider>
+          <BrowserRouter>
+            <Suspense fallback={<Loading />}>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
 
-              {/* Shared layout for all authenticated users */}
-              <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
-                <Route index element={<RoleRedirect />} />
+                {/* Shared layout for all authenticated users */}
+                <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
+                  <Route index element={<RoleRedirect />} />
 
-                {/* Admin / Directivo routes */}
-                <Route path="estudiantes" element={<EstudiantesPage />} />
-                <Route path="docentes" element={<DocentesPage />} />
-                <Route path="cursos" element={<CursosPage />} />
-                <Route path="calificaciones" element={<CalificacionesPage />} />
-                <Route path="asistencia" element={<AsistenciaPage />} />
-                <Route path="pagos" element={<PagosPage />} />
-                <Route path="inscripciones" element={<InscripcionesPage />} />
-                <Route path="horario" element={<HorarioPage />} />
+                  {/* Admin / Directivo routes */}
+                  <Route path="estudiantes" element={<EstudiantesPage />} />
+                  <Route path="docentes" element={<DocentesPage />} />
+                  <Route path="cursos" element={<CursosPage />} />
+                  <Route path="calificaciones" element={<CalificacionesPage />} />
+                  <Route path="asistencia" element={<AsistenciaPage />} />
+                  <Route path="pagos" element={<PagosPage />} />
+                  <Route path="inscripciones" element={<InscripcionesPage />} />
+                  <Route path="horario" element={<HorarioPage />} />
+                  <Route path="anio-academico" element={<AnioAcademicoPage />} />
 
-                {/* Teacher routes */}
-                <Route path="docente" element={<TeacherDashboard />} />
-                <Route path="docente/cursos/:id" element={<TeacherCoursePage />} />
+                  {/* Teacher routes */}
+                  <Route path="docente" element={<TeacherDashboard />} />
+                  <Route path="docente/cursos/:id" element={<TeacherCoursePage />} />
 
-                {/* Student routes */}
-                <Route path="estudiante" element={<StudentPortalPage />} />
+                  {/* Student routes */}
+                  <Route path="estudiante" element={<StudentPortalPage />} />
 
-                {/* Profile route */}
-                <Route path="perfil" element={<ProfilePage />} />
-              </Route>
+                  {/* Profile route */}
+                  <Route path="perfil" element={<ProfilePage />} />
+                </Route>
 
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </ConfigProvider>
       </AuthProvider>
     </ThemeProvider>
   );

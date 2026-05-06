@@ -17,7 +17,11 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import Select from '@mui/material/Select';
+import Chip from '@mui/material/Chip';
 import { useAuth } from '../contexts/AuthContext';
+import { useConfig } from '../contexts/ConfigContext';
 
 const DRAWER_WIDTH = 240;
 
@@ -35,17 +39,21 @@ const NAV_ITEMS: { label: string; icon: React.ReactElement; path: string; roles?
   { label: 'Calificaciones', icon: <GradeIcon />, path: '/calificaciones', roles: ['administrativo', 'directivo'] },
   { label: 'Asistencia', icon: <EventAvailableIcon />, path: '/asistencia', roles: ['administrativo', 'directivo'] },
   { label: 'Pagos', icon: <PaymentIcon />, path: '/pagos', roles: ['administrativo', 'directivo'] },
+  { label: 'Año Académico', icon: <DateRangeIcon />, path: '/anio-academico', roles: ['directivo'] },
   { label: 'Mi Perfil', icon: <PersonIcon />, path: '/perfil' },
 ];
 
 export default function Layout() {
   const { user, logout } = useAuth();
+  const { anios, anioActivo, trimestreActual, periodoVisor, setPeriodoVisor } = useConfig();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const isAdmin = user?.role === 'directivo' || user?.role === 'administrativo';
 
   const handleLogout = async () => {
     await logout();
@@ -57,6 +65,26 @@ export default function Layout() {
       <Box sx={{ p: 2, background: 'linear-gradient(135deg, #1976d2, #1565c0)', color: 'white' }}>
         <Typography variant="h6" sx={{ fontWeight: 700 }}>SGE</Typography>
         <Typography variant="caption">Sistema Gestión Escolar</Typography>
+        {isAdmin && anioActivo && (
+          <Box sx={{ mt: 1.5 }}>
+            <Typography variant="caption" sx={{ opacity: 0.8, display: 'block', mb: 0.5 }}>Año Escolar</Typography>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+              <Select
+                native size="small"
+                value={periodoVisor || anioActivo?.nombre || ''}
+                onChange={e => setPeriodoVisor(e.target.value === anioActivo?.nombre ? null : e.target.value)}
+                sx={{ bgcolor: 'rgba(255,255,255,0.15)', color: 'white', fontSize: 13,
+                  '& .MuiNativeSelect-select': { py: 0.5, color: 'white' },
+                  '& .MuiNativeSelect-icon': { color: 'white' },
+                  '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
+                }}
+              >
+                {anios.map(a => <option key={a.id} value={a.nombre} style={{ color: '#333' }}>{a.nombre}</option>)}
+              </Select>
+              <Chip label={trimestreActual} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.25)', color: 'white', fontWeight: 700, fontSize: 11 }} />
+            </Box>
+          </Box>
+        )}
       </Box>
       <Divider />
       <List sx={{ flexGrow: 1, pt: 1 }}>
