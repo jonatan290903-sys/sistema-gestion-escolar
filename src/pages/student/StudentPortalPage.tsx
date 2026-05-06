@@ -128,21 +128,10 @@ function TabHorario({ cursoId, cursoNombre }: { cursoId: number; cursoNombre: st
 // ── Notas y asistencia ────────────────────────────────────────────────────────
 
 function GradeChip({ nota }: { nota: number | null }) {
-  if (nota === null) return <Typography variant="body2" color="text.disabled">—</Typography>;
-  const color = nota >= 65 ? '#2e7d32' : nota >= 51 ? '#e65100' : '#c62828';
-  return <Typography variant="body2" sx={{ fontWeight: 700, color }}>{nota.toFixed(1)}</Typography>;
-}
-
-function calcularPromedio(centro: CentroNotas): number | null {
-  const fila = centro.filas[0];
-  if (!fila) return null;
-  const notas: number[] = [];
-  for (const act of centro.actividades) {
-    const nota = fila.notas[String(act.id)];
-    if (nota !== null && nota !== undefined) notas.push(nota);
+  if (nota === null) {
+    return <Typography variant="body2" color="text.disabled">—</Typography>;
   }
-  if (notas.length === 0) return null;
-  return Math.round(notas.reduce((a, b) => a + b, 0) / notas.length * 10) / 10;
+  return <Typography variant="body2" sx={{ fontWeight: 700, color: 'text.primary' }}>●</Typography>;
 }
 
 function MateriaDetail({ materia }: { materia: Materia }) {
@@ -199,14 +188,6 @@ function MateriaDetail({ materia }: { materia: Materia }) {
                       </TableRow>
                     );
                   })}
-                  {centroNotas.filas[0] && (
-                    <TableRow sx={{ bgcolor: '#f5f5f5' }}>
-                      <TableCell colSpan={3} sx={{ fontWeight: 700 }}>Promedio</TableCell>
-                      <TableCell sx={{ textAlign: 'center' }}>
-                        <GradeChip nota={calcularPromedio(centroNotas)} />
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
             </TableContainer>

@@ -29,8 +29,12 @@ export default function InscripcionesPage() {
   const [selectedEstudiante, setSelectedEstudiante] = useState<Estudiante | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const { anioActivo, periodoVisor } = useConfig();
+  const { anioActivo, periodoVisor, anios } = useConfig();
   const selectedYear = periodoVisor || anioActivo?.nombre;
+  const selectedAnio = anios.find(a => a.nombre === selectedYear) || null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selectedYearHasStarted = !selectedAnio || new Date(selectedAnio.fecha_inicio) <= today;
 
   const load = async () => {
     try {
@@ -51,11 +55,12 @@ export default function InscripcionesPage() {
 
   const selectedCurso = cursos.find(c => String(c.id) === form.curso_id);
   const inscripcionesActuales = selectedYear
-    ? inscripciones.filter(ins => ins.curso.periodo === selectedYear)
-    : inscripciones;
-  const inscripcionesParaFiltro = selectedYear ? inscripcionesActuales : inscripciones;
-  const estudiantesDisponibles = estudiantes
-    .filter(e => e.estado === 'activo' && !inscripcionesParaFiltro.some(ins => ins.estudiante.id === e.id));
+    ? inscripciones.filter(ins => ins.curso.periodo === selectedYear && ins.estado === 'activo')
+    : inscripciones.filter(ins => ins.estado === 'activo');
+  const inscritosActuales = new Set(inscripcionesActuales.map(ins => ins.estudiante.id));
+  const estudiantesDisponibles = selectedYearHasStarted
+    ? estudiantes.filter(e => e.estado === 'activo' && !inscritosActuales.has(e.id))
+    : [];
 
   const openForm = () => { setForm({ estudiante_id: '', curso_id: '' }); setSelectedEstudiante(null); setError(''); setOpen(true); };
 
@@ -188,31 +193,10 @@ export default function InscripcionesPage() {
                 fullWidth
               />
             )}
-            noOptionsText="No hay estudiantes disponibles"
+            noOptionsText={selectedYearHasStarted ? 'No hay estudiantes disponibles' : 'Esperando inicio del año escolar'}
           />
-
-          <TextField
-            select
-            label="Curso"
-            value={form.curso_id}
-            onChange={e => setForm({ ...form, curso_id: e.target.value })}
-            fullWidth
-          >
-            <MenuItem value=""><em>— Selecciona un curso —</em></MenuItem>
-            {cursos
-              .filter(c => c.estado && (!selectedYear || c.periodo === selectedYear))
-              .map(c => (
-                <MenuItem key={c.id} value={String(c.id)}>
-                  {c.nombre}
-                  {c.periodo ? ` — ${c.periodo}` : ''}
-                </MenuItem>
-              ))}
-          </TextField>
-
-          {selectedCurso && selectedCurso.periodo && (
-            <Alert severity="info" icon={false}>
-              Período del curso: <strong>{selectedCurso.periodo}</strong>
-            </Alert>
+          {!selectedYearHasStarted && selectedAnio && (
+            <Alert severity="info">El año escolar {selectedAnio.nombre} inicia el {selectedAnio.fecha_inicio}. Los estudiantes estarán disponibles después de esa fecha.</Alert>
           )}
 
           {selectedCurso && !selectedCurso.periodo && (

@@ -34,7 +34,7 @@ const NAV_ITEMS: { label: string; icon: React.ReactElement; path: string; roles?
   { label: 'Estudiantes', icon: <PeopleIcon />, path: '/estudiantes', roles: ['administrativo', 'directivo'] },
   { label: 'Inscripciones', icon: <AssignmentIndIcon />, path: '/inscripciones', roles: ['administrativo'] },
   { label: 'Docentes', icon: <SchoolIcon />, path: '/docentes', roles: ['administrativo', 'directivo'] },
-  { label: 'Cursos', icon: <BookIcon />, path: '/cursos', roles: ['administrativo', 'directivo'] },
+  { label: 'Materias', icon: <BookIcon />, path: '/cursos', roles: ['administrativo', 'directivo'] },
   { label: 'Horario', icon: <CalendarMonthIcon />, path: '/horario', roles: ['administrativo', 'directivo'] },
   { label: 'Calificaciones', icon: <GradeIcon />, path: '/calificaciones', roles: ['administrativo', 'directivo'] },
   { label: 'Asistencia', icon: <EventAvailableIcon />, path: '/asistencia', roles: ['administrativo', 'directivo'] },

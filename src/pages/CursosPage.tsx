@@ -61,14 +61,31 @@ export default function CursosPage() {
     </Box>
   );
 
+  const materiasPorCurso = cursos.reduce<Record<number, Materia[]>>((acc, curso) => {
+    acc[curso.id] = [];
+    return acc;
+  }, {});
+
+  materias.forEach((m) => {
+    if (m.curso?.id) {
+      materiasPorCurso[m.curso.id] = materiasPorCurso[m.curso.id] || [];
+      materiasPorCurso[m.curso.id].push(m);
+    }
+  });
+
+  const cursosConMaterias = cursos.filter(c => (materiasPorCurso[c.id] || []).length > 0);
+
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>Materias</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 700 }}>Materias</Typography>
+          <Typography variant="body2" color="text.secondary">Gestiona materias y revisa los cursos que tienen materias vinculadas.</Typography>
+        </Box>
         <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2 }}>Nueva Materia</Button>
       </Box>
 
-      <Card sx={{ borderRadius: 3, boxShadow: 2 }}>
+      <Card sx={{ borderRadius: 3, boxShadow: 2, mb: 4 }}>
         <TableContainer>
           <Table>
             <TableHead>
@@ -94,6 +111,39 @@ export default function CursosPage() {
                     <Tooltip title="Editar"><IconButton size="small" onClick={() => openEdit(m)}><EditIcon fontSize="small" /></IconButton></Tooltip>
                     <Tooltip title="Desactivar"><IconButton size="small" color="error" onClick={() => handleDelete(m.id)}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
                   </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
+
+      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Cursos con materias vinculadas</Typography>
+      <Card sx={{ borderRadius: 3, boxShadow: 2, mb: 4 }}>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow sx={{ bgcolor: 'grey.50' }}>
+                <TableCell><b>Curso</b></TableCell>
+                <TableCell><b>Período</b></TableCell>
+                <TableCell><b>Materias vinculadas</b></TableCell>
+                <TableCell align="right"><b>Total</b></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {cursosConMaterias.length === 0 && (
+                <TableRow><TableCell colSpan={4} align="center" sx={{ py: 4, color: 'text.secondary' }}>No hay cursos con materias vinculadas</TableCell></TableRow>
+              )}
+              {cursosConMaterias.map(c => (
+                <TableRow key={c.id} hover>
+                  <TableCell>{c.nombre}</TableCell>
+                  <TableCell>{c.periodo || '—'}</TableCell>
+                  <TableCell>
+                    {materiasPorCurso[c.id].map((m) => (
+                      <Chip key={m.id} label={m.nombre} size="small" sx={{ mr: 0.5, mb: 0.5 }} />
+                    ))}
+                  </TableCell>
+                  <TableCell align="right"><b>{materiasPorCurso[c.id].length}</b></TableCell>
                 </TableRow>
               ))}
             </TableBody>
