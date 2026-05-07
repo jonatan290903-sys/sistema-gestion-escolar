@@ -21,6 +21,7 @@ export default function PagosPage() {
   const [pagos, setPagos] = useState<Pago[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
+  const rowsPerPage = 50;
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -138,7 +139,7 @@ export default function PagosPage() {
             count={totalCount}
             page={page}
             onPageChange={handleChangePage}
-            rowsPerPage={50}
+            rowsPerPage={rowsPerPage}
             rowsPerPageOptions={[50]}
             labelRowsPerPage="Filas por página:"
           />

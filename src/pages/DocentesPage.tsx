@@ -125,7 +125,7 @@ export default function DocentesPage() {
             count={totalCount}
             page={page}
             onPageChange={handleChangePage}
-            rowsPerPage={50}
+            rowsPerPage={rowsPerPage}
             rowsPerPageOptions={[50]}
             labelRowsPerPage="Filas por página:"
           />
