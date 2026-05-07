@@ -17,20 +17,8 @@ api.interceptors.request.use((config) => {
 // Interceptor to handle responses and common errors
 api.interceptors.response.use(
   (response: AxiosResponse) => {
-    // Optimization: If the response is paginated (DRF standard),
-    // we extract the results so the frontend components (which expect arrays) continue to work.
-    // In a full implementation, we would store pagination metadata (count, next, previous).
-    if (response.data && typeof response.data === 'object' && 'results' in response.data && Array.isArray(response.data.results)) {
-      return {
-        ...response,
-        data: response.data.results,
-        pagination: {
-          count: response.data.count,
-          next: response.data.next,
-          previous: response.data.previous
-        }
-      } as any;
-    }
+    // If the response is paginated (DRF standard), keep the full payload so calling code
+    // can access count/next/previous/results consistently.
     return response;
   },
   async (error) => {
