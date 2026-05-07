@@ -40,6 +40,7 @@ export default function PagosPage() {
     } finally { setLoading(false); }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(0); setPage(0); }, []);
 
   const handleChangePage = (_: any, newPage: number) => {

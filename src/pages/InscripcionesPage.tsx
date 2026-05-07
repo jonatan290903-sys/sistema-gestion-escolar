@@ -23,7 +23,7 @@ export default function InscripcionesPage() {
   const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(50);
+  const rowsPerPage = 50;
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +56,7 @@ export default function InscripcionesPage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(0); setPage(0); }, [selectedYear]);
 
   const handleChangePage = (_: any, newPage: number) => {

@@ -19,10 +19,10 @@ const ESTADO_COLOR: Record<string, any> = {
 const emptyForm = { first_name: '', last_name: '', email: '', numero_expediente: '', documento: '', fecha_nacimiento: '', curso_id: '', estado: 'activo' };
 
 export default function EstudiantesPage() {
-  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(50);
+  const rowsPerPage = 50;
+  const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -48,6 +48,7 @@ export default function EstudiantesPage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(0); setPage(0); }, [filterSinCurso, selectedYear]);
 
   const handleChangePage = (_: any, newPage: number) => {

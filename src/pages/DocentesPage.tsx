@@ -15,6 +15,7 @@ const emptyForm = { first_name: '', last_name: '', email: '', especialidad: '', 
 export default function DocentesPage() {
   const [docentes, setDocentes] = useState<Docente[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const rowsPerPage = 50;
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -32,6 +33,7 @@ export default function DocentesPage() {
     finally { setLoading(false); }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(0); setPage(0); }, []);
 
   const handleChangePage = (_: any, newPage: number) => {
