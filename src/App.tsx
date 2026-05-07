@@ -8,6 +8,7 @@ import Layout from './components/Layout';
 
 // Lazy load pages
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const ForceChangePasswordPage = lazy(() => import('./pages/ForceChangePasswordPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const EstudiantesPage = lazy(() => import('./pages/EstudiantesPage'));
 const DocentesPage = lazy(() => import('./pages/DocentesPage'));
@@ -55,6 +56,18 @@ function RoleRedirect() {
   return <DashboardPage />;
 }
 
+/**
+ * Wrapper that forces users with must_change_password to the password change page.
+ * Any authenticated route goes through this check first.
+ */
+function RequirePasswordChanged({ children }: { children: React.ReactNode }) {
+  const { mustChangePassword } = useAuth();
+  if (mustChangePassword) {
+    return <Navigate to="/cambiar-contrasena" replace />;
+  }
+  return <>{children}</>;
+}
+
 export default function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -66,8 +79,19 @@ export default function App() {
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
 
+                {/* Force change password route - accessible only when authenticated */}
+                <Route path="/cambiar-contrasena" element={
+                  <PrivateRoute><ForceChangePasswordPage /></PrivateRoute>
+                } />
+
                 {/* Shared layout for all authenticated users */}
-                <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
+                <Route path="/" element={
+                  <PrivateRoute>
+                    <RequirePasswordChanged>
+                      <Layout />
+                    </RequirePasswordChanged>
+                  </PrivateRoute>
+                }>
                   <Route index element={<RoleRedirect />} />
 
                   {/* Admin / Directivo routes */}

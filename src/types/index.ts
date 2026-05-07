@@ -8,6 +8,7 @@ export interface User {
   phone: string;
   address: string;
   profile_image: string | null;
+  must_change_password: boolean;
   created_at: string;
 }
 

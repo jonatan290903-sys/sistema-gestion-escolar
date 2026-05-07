@@ -6,6 +6,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  mustChangePassword: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: User) => void;
@@ -38,10 +39,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateUser = (userData: User) => {
     setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
+  const mustChangePassword = !!user?.must_change_password;
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, mustChangePassword, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
