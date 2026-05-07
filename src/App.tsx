@@ -6,23 +6,37 @@ import { ConfigProvider } from './contexts/ConfigContext';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
 
+// Wrapper to handle ChunkLoadErrors
+const lazyRetry = (importFn: () => Promise<any>) => {
+  return lazy(async () => {
+    try {
+      return await importFn();
+    } catch (error) {
+      // If a chunk load fails, it's likely a new deployment happened.
+      // We force a page reload to get the latest bundle.
+      window.location.reload();
+      return { default: () => null };
+    }
+  });
+};
+
 // Lazy load pages
-const LoginPage = lazy(() => import('./pages/LoginPage'));
-const ForceChangePasswordPage = lazy(() => import('./pages/ForceChangePasswordPage'));
-const DashboardPage = lazy(() => import('./pages/DashboardPage'));
-const EstudiantesPage = lazy(() => import('./pages/EstudiantesPage'));
-const DocentesPage = lazy(() => import('./pages/DocentesPage'));
-const CursosPage = lazy(() => import('./pages/CursosPage'));
-const CalificacionesPage = lazy(() => import('./pages/CalificacionesPage'));
-const AsistenciaPage = lazy(() => import('./pages/AsistenciaPage'));
-const PagosPage = lazy(() => import('./pages/PagosPage'));
-const InscripcionesPage = lazy(() => import('./pages/InscripcionesPage'));
-const HorarioPage = lazy(() => import('./pages/HorarioPage'));
-const TeacherDashboard = lazy(() => import('./pages/teacher/TeacherDashboard'));
-const TeacherCoursePage = lazy(() => import('./pages/teacher/TeacherCoursePage'));
-const StudentPortalPage = lazy(() => import('./pages/student/StudentPortalPage'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const AnioAcademicoPage = lazy(() => import('./pages/AnioAcademicoPage'));
+const LoginPage = lazyRetry(() => import('./pages/LoginPage'));
+const ForceChangePasswordPage = lazyRetry(() => import('./pages/ForceChangePasswordPage'));
+const DashboardPage = lazyRetry(() => import('./pages/DashboardPage'));
+const EstudiantesPage = lazyRetry(() => import('./pages/EstudiantesPage'));
+const DocentesPage = lazyRetry(() => import('./pages/DocentesPage'));
+const CursosPage = lazyRetry(() => import('./pages/CursosPage'));
+const CalificacionesPage = lazyRetry(() => import('./pages/CalificacionesPage'));
+const AsistenciaPage = lazyRetry(() => import('./pages/AsistenciaPage'));
+const PagosPage = lazyRetry(() => import('./pages/PagosPage'));
+const InscripcionesPage = lazyRetry(() => import('./pages/InscripcionesPage'));
+const HorarioPage = lazyRetry(() => import('./pages/HorarioPage'));
+const TeacherDashboard = lazyRetry(() => import('./pages/teacher/TeacherDashboard'));
+const TeacherCoursePage = lazyRetry(() => import('./pages/teacher/TeacherCoursePage'));
+const StudentPortalPage = lazyRetry(() => import('./pages/student/StudentPortalPage'));
+const ProfilePage = lazyRetry(() => import('./pages/ProfilePage'));
+const AnioAcademicoPage = lazyRetry(() => import('./pages/AnioAcademicoPage'));
 
 const theme = createTheme({
   palette: {
