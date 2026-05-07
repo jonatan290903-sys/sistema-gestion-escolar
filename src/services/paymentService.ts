@@ -1,9 +1,9 @@
 import api from './api';
-import { Pago } from '../types';
+import { Pago, PaginatedResponse } from '../types';
 
 export const paymentService = {
-  async getPagos(params?: any): Promise<Pago[]> {
-    const { data } = await api.get<Pago[]>('/api/v1/pagos/', { params });
+  async getPagos(params?: any): Promise<PaginatedResponse<Pago>> {
+    const { data } = await api.get<PaginatedResponse<Pago>>('/api/v1/pagos/', { params });
     return data;
   },
   async createPago(payload: any): Promise<Pago> {

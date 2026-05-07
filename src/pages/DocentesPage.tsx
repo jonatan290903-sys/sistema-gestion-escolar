@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, Button, Table, TableHead, TableRow, TableCell, TableBody,
   Chip, CircularProgress, IconButton, Dialog, DialogTitle, DialogContent,
-  DialogActions, TextField, MenuItem, TableContainer, Card, Tooltip, Alert,
+  DialogActions, TextField, MenuItem, TableContainer, Card, Tooltip, Alert, TablePagination
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,18 +14,30 @@ const emptyForm = { first_name: '', last_name: '', email: '', especialidad: '', 
 
 export default function DocentesPage() {
   const [docentes, setDocentes] = useState<Docente[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>(emptyForm);
   const [editing, setEditing] = useState<number | null>(null);
   const [error, setError] = useState('');
 
-  const load = async () => {
-    try { setDocentes(await courseService.getDocentes()); }
+  const load = async (currentPage = page) => {
+    setLoading(true);
+    try {
+      const res = await courseService.getDocentes();
+      setDocentes(res.results);
+      setTotalCount(res.count);
+    }
     finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(0); setPage(0); }, []);
+
+  const handleChangePage = (_: any, newPage: number) => {
+    setPage(newPage);
+    load(newPage);
+  };
 
   const openCreate = () => { setForm(emptyForm); setEditing(null); setError(''); setOpen(true); };
   const openEdit = (d: Docente) => {
@@ -53,7 +65,7 @@ export default function DocentesPage() {
     }
   };
 
-  if (loading) return (
+  if (loading && docentes.length === 0) return (
     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
       <CircularProgress />
     </Box>
@@ -83,25 +95,39 @@ export default function DocentesPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {docentes.length === 0 && (
+              {loading ? (
+                <TableRow><TableCell colSpan={7} align="center" sx={{ py: 4 }}><CircularProgress size={24} /></TableCell></TableRow>
+              ) : docentes.length === 0 ? (
                 <TableRow><TableCell colSpan={7} align="center" sx={{ py: 4, color: 'text.secondary' }}>No hay docentes registrados</TableCell></TableRow>
+              ) : (
+                docentes.map((d) => (
+                  <TableRow key={d.id} hover>
+                    <TableCell>{d.user.first_name} {d.user.last_name}</TableCell>
+                    <TableCell>{d.documento}</TableCell>
+                    <TableCell>{d.especialidad}</TableCell>
+                    <TableCell>{d.titulo_profesional}</TableCell>
+                    <TableCell>{d.fecha_contratacion}</TableCell>
+                    <TableCell><Chip label={d.estado} color={d.estado === 'activo' ? 'success' : 'default'} size="small" /></TableCell>
+                    <TableCell align="right">
+                      <Tooltip title="Editar"><IconButton size="small" onClick={() => openEdit(d)}><EditIcon fontSize="small" /></IconButton></Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
-              {docentes.map((d) => (
-                <TableRow key={d.id} hover>
-                  <TableCell>{d.user.first_name} {d.user.last_name}</TableCell>
-                  <TableCell>{d.documento}</TableCell>
-                  <TableCell>{d.especialidad}</TableCell>
-                  <TableCell>{d.titulo_profesional}</TableCell>
-                  <TableCell>{d.fecha_contratacion}</TableCell>
-                  <TableCell><Chip label={d.estado} color={d.estado === 'activo' ? 'success' : 'default'} size="small" /></TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="Editar"><IconButton size="small" onClick={() => openEdit(d)}><EditIcon fontSize="small" /></IconButton></Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Box sx={{ p: 1, borderTop: '1px solid', borderColor: 'divider' }}>
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={50}
+            rowsPerPageOptions={[50]}
+            labelRowsPerPage="Filas por página:"
+          />
+        </Box>
       </Card>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>

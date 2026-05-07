@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, Button, Table, TableHead, TableRow, TableCell, TableBody,
   CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, MenuItem, TableContainer, Card, Alert, Chip, Grid,
+  TextField, MenuItem, TableContainer, Card, Alert, Chip, Grid, TablePagination
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
@@ -19,20 +19,33 @@ const emptyForm = { estudiante_id: '', monto: '', concepto: 'pension', fecha_ven
 
 export default function PagosPage() {
   const [pagos, setPagos] = useState<Pago[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(0);
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>(emptyForm);
   const [error, setError] = useState('');
 
-  const load = async () => {
+  const load = async (currentPage = page) => {
+    setLoading(true);
     try {
-      const [pag, est] = await Promise.all([paymentService.getPagos(), studentService.getEstudiantes()]);
-      setPagos(pag); setEstudiantes(est);
+      const [pag, est] = await Promise.all([
+        paymentService.getPagos({ page: currentPage + 1 }),
+        studentService.getEstudiantes({ page: 1 })
+      ]);
+      setPagos(pag.results); 
+      setTotalCount(pag.count);
+      setEstudiantes(est.results);
     } finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(0); setPage(0); }, []);
+
+  const handleChangePage = (_: any, newPage: number) => {
+    setPage(newPage);
+    load(newPage);
+  };
 
   const handleSave = async () => {
     setError('');
@@ -49,7 +62,7 @@ export default function PagosPage() {
     load();
   };
 
-  if (loading) return (
+  if (loading && pagos.length === 0) return (
     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
       <CircularProgress />
     </Box>
@@ -93,28 +106,42 @@ export default function PagosPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {pagos.length === 0 && (
+              {loading ? (
+                <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4 }}><CircularProgress size={24} /></TableCell></TableRow>
+              ) : pagos.length === 0 ? (
                 <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>No hay pagos registrados</TableCell></TableRow>
+              ) : (
+                pagos.map(p => (
+                  <TableRow key={p.id} hover>
+                    <TableCell>{p.estudiante_info ? `${p.estudiante_info.user.first_name} ${p.estudiante_info.user.last_name}` : '—'}</TableCell>
+                    <TableCell>{p.concepto}</TableCell>
+                    <TableCell><b>S/ {parseFloat(p.monto).toFixed(2)}</b></TableCell>
+                    <TableCell>{p.fecha_vencimiento}</TableCell>
+                    <TableCell><Chip label={p.estado} color={ESTADO_COLOR[p.estado]} size="small" /></TableCell>
+                    <TableCell>
+                      {(p.estado === 'pendiente' || p.estado === 'vencido') && (
+                        <Button size="small" variant="outlined" color="success" startIcon={<CheckIcon />} onClick={() => marcarPagado(p)}>
+                          Marcar pagado
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
-              {pagos.map(p => (
-                <TableRow key={p.id} hover>
-                  <TableCell>{p.estudiante_info ? `${p.estudiante_info.user.first_name} ${p.estudiante_info.user.last_name}` : '—'}</TableCell>
-                  <TableCell>{p.concepto}</TableCell>
-                  <TableCell><b>S/ {parseFloat(p.monto).toFixed(2)}</b></TableCell>
-                  <TableCell>{p.fecha_vencimiento}</TableCell>
-                  <TableCell><Chip label={p.estado} color={ESTADO_COLOR[p.estado]} size="small" /></TableCell>
-                  <TableCell>
-                    {(p.estado === 'pendiente' || p.estado === 'vencido') && (
-                      <Button size="small" variant="outlined" color="success" startIcon={<CheckIcon />} onClick={() => marcarPagado(p)}>
-                        Marcar pagado
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Box sx={{ p: 1, borderTop: '1px solid', borderColor: 'divider' }}>
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={50}
+            rowsPerPageOptions={[50]}
+            labelRowsPerPage="Filas por página:"
+          />
+        </Box>
       </Card>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>

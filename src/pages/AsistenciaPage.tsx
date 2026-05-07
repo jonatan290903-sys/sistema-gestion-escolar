@@ -74,9 +74,10 @@ function TabDiaria({ cursos }: { cursos: Curso[] }) {
     Promise.all([
       courseService.getHorario(Number(cursoId)),
       studentService.getEstudiantes({ curso: Number(cursoId), estado: 'activo' }),
-    ]).then(async ([horario, ests]) => {
+    ]).then(async ([horario, res]) => {
       const mats = getMateriasForDay(horario, dia);
       setMateriasDelDia(mats);
+      const ests = res.results;
       setEstudiantes(ests);
 
       if (mats.length === 0) {

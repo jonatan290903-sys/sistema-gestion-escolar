@@ -26,7 +26,7 @@ export default function CursosPage() {
   const load = async () => {
     try {
       const [mat, cur, doc] = await Promise.all([courseService.getMaterias(), studentService.getCursos(), courseService.getDocentes()]);
-      setMaterias(mat); setCursos(cur); setDocentes(doc);
+      setMaterias(mat); setCursos(cur); setDocentes(doc.results);
     } finally { setLoading(false); }
   };
 

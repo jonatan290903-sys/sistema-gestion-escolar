@@ -104,8 +104,8 @@ export const courseService = {
   },
 
   // Docentes
-  async getDocentes(): Promise<Docente[]> {
-    const { data } = await api.get<Docente[]>('/api/v1/auth/docentes/');
+  async getDocentes(): Promise<PaginatedResponse<Docente>> {
+    const { data } = await api.get<PaginatedResponse<Docente>>('/api/v1/auth/docentes/');
     return data;
   },
 
