@@ -40,9 +40,9 @@ export default function EstudiantesPage() {
         studentService.getEstudiantes({ page: currentPage + 1 }),
         studentService.getCursos()
       ]);
-      setEstudiantes(res.results);
-      setTotalCount(res.count);
-      setCursos(cur);
+      setEstudiantes(res?.results || []);
+      setTotalCount(res?.count || 0);
+      setCursos(cur || []);
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ export default function EstudiantesPage() {
   
   // Nota: El filtrado local "filterSinCurso" ahora solo aplica a los resultados de la página actual.
   // Para un filtrado completo, debería implementarse en el backend.
-  const estudiantesFiltrados = estudiantes.filter((e) => {
+  const estudiantesFiltrados = (estudiantes || []).filter((e) => {
     if (!filterSinCurso) return true;
     if (!selectedYear) return !e.curso;
     return !e.curso || e.curso.periodo !== selectedYear;
