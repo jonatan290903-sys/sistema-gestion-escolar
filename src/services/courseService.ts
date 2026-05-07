@@ -1,6 +1,6 @@
 import api from './api';
 import { Materia, Inscripcion, Actividad, Calificacion, Asistencia, Docente,
-         ResumenAsistencia, CentroNotas, EstadoAsistencia, HorarioCurso } from '../types';
+         ResumenAsistencia, CentroNotas, EstadoAsistencia, HorarioCurso, PaginatedResponse } from '../types';
 
 export const courseService = {
   // Materias
@@ -31,8 +31,8 @@ export const courseService = {
   },
 
   // Inscripciones (solo administrativo)
-  async getInscripciones(params?: { estudiante?: number; curso?: number; estado?: string }): Promise<Inscripcion[]> {
-    const { data } = await api.get<Inscripcion[]>('/api/v1/materias/inscripciones/', { params });
+  async getInscripciones(params?: { estudiante?: number; curso?: number; estado?: string; page?: number }): Promise<PaginatedResponse<Inscripcion>> {
+    const { data } = await api.get<PaginatedResponse<Inscripcion>>('/api/v1/materias/inscripciones/', { params });
     return data;
   },
   async createInscripcion(payload: { estudiante_id: number; curso_id: number }): Promise<Inscripcion> {

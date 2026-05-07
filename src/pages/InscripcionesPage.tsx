@@ -3,7 +3,7 @@ import {
   Box, Typography, Button, Card, CircularProgress, Dialog, DialogTitle,
   DialogContent, DialogActions, TextField, Alert, Chip,
   Table, TableHead, TableRow, TableCell, TableBody, TableContainer,
-  IconButton, Tooltip, Autocomplete,
+  IconButton, Tooltip, Autocomplete, TablePagination
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useConfig } from '../contexts/ConfigContext';
@@ -21,6 +21,9 @@ const ESTADO_COLOR: Record<string, 'success' | 'error' | 'default'> = {
 
 export default function InscripcionesPage() {
   const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(50);
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,27 +39,37 @@ export default function InscripcionesPage() {
   today.setHours(0, 0, 0, 0);
   const selectedYearHasStarted = !selectedAnio || new Date(selectedAnio.fecha_inicio) <= today;
 
-  const load = async () => {
+  const load = async (currentPage = page) => {
+    setLoading(true);
     try {
-      const [insc, est, cur] = await Promise.all([
-        courseService.getInscripciones(),
-        studentService.getEstudiantes(),
+      const [resInsc, resEst, cur] = await Promise.all([
+        courseService.getInscripciones({ page: currentPage + 1 }),
+        studentService.getEstudiantes({ page: 1 }), // Solo la primera pág para el buscador
         studentService.getCursos(),
       ]);
-      setInscripciones(insc);
-      setEstudiantes(est);
+      setInscripciones(resInsc.results);
+      setTotalCount(resInsc.count);
+      setEstudiantes(resEst.results);
       setCursos(cur);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(0); setPage(0); }, [selectedYear]);
+
+  const handleChangePage = (_: any, newPage: number) => {
+    setPage(newPage);
+    load(newPage);
+  };
 
   const selectedCurso = cursos.find(c => String(c.id) === form.curso_id);
+  // Nota: El filtrado por año ahora se hace en la UI pero basado en la página actual.
+  // Idealmente el backend debería aceptar el año como filtro.
   const inscripcionesActuales = selectedYear
     ? inscripciones.filter(ins => ins.curso.periodo === selectedYear && ins.estado === 'activo')
     : inscripciones.filter(ins => ins.estado === 'activo');
+  
   const inscritosActuales = new Set(inscripcionesActuales.map(ins => ins.estudiante.id));
   const estudiantesDisponibles = estudiantes.filter(e => e.estado === 'activo' && !inscritosActuales.has(e.id));
 
@@ -89,7 +102,7 @@ export default function InscripcionesPage() {
     load();
   };
 
-  if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}><CircularProgress /></Box>;
+  if (loading && inscripciones.length === 0) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}><CircularProgress /></Box>;
 
   return (
     <Box>
@@ -116,50 +129,67 @@ export default function InscripcionesPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {inscripcionesActuales.length === 0 && (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center" sx={{ py: 5 }}><CircularProgress size={24} /></TableCell>
+                </TableRow>
+              ) : inscripcionesActuales.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center" sx={{ py: 5, color: 'text.secondary' }}>
                     No hay inscripciones registradas para el año {selectedYear ?? 'actual'}
                   </TableCell>
                 </TableRow>
+              ) : (
+                inscripcionesActuales.map(ins => (
+                  <TableRow key={ins.id} hover>
+                    <TableCell sx={{ fontWeight: 500 }}>
+                      {ins.estudiante.user.first_name} {ins.estudiante.user.last_name}
+                    </TableCell>
+                    <TableCell>
+                      <Chip label={ins.estudiante.numero_expediente} size="small" variant="outlined" />
+                    </TableCell>
+                    <TableCell>{ins.curso.nombre}</TableCell>
+                    <TableCell>
+                      {ins.curso.periodo
+                        ? <Chip label={ins.curso.periodo} size="small" color="primary" variant="outlined" />
+                        : <Typography variant="caption" color="text.disabled">—</Typography>}
+                    </TableCell>
+                    <TableCell>{new Date(ins.fecha_inscripcion).toLocaleDateString('es-PE')}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={ins.estado}
+                        size="small"
+                        color={ESTADO_COLOR[ins.estado] ?? 'default'}
+                      />
+                    </TableCell>
+                    <TableCell>{ins.registrada_por ?? '—'}</TableCell>
+                    <TableCell align="right">
+                      {ins.estado === 'activo' && (
+                        <Tooltip title="Retirar inscripción">
+                          <IconButton size="small" color="error" onClick={() => handleRetirar(ins.id)}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
-              {inscripcionesActuales.map(ins => (
-                <TableRow key={ins.id} hover>
-                  <TableCell sx={{ fontWeight: 500 }}>
-                    {ins.estudiante.user.first_name} {ins.estudiante.user.last_name}
-                  </TableCell>
-                  <TableCell>
-                    <Chip label={ins.estudiante.numero_expediente} size="small" variant="outlined" />
-                  </TableCell>
-                  <TableCell>{ins.curso.nombre}</TableCell>
-                  <TableCell>
-                    {ins.curso.periodo
-                      ? <Chip label={ins.curso.periodo} size="small" color="primary" variant="outlined" />
-                      : <Typography variant="caption" color="text.disabled">—</Typography>}
-                  </TableCell>
-                  <TableCell>{new Date(ins.fecha_inscripcion).toLocaleDateString('es-PE')}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={ins.estado}
-                      size="small"
-                      color={ESTADO_COLOR[ins.estado] ?? 'default'}
-                    />
-                  </TableCell>
-                  <TableCell>{ins.registrada_por ?? '—'}</TableCell>
-                  <TableCell align="right">
-                    {ins.estado === 'activo' && (
-                      <Tooltip title="Retirar inscripción">
-                        <IconButton size="small" color="error" onClick={() => handleRetirar(ins.id)}>
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Box sx={{ p: 1, borderTop: '1px solid', borderColor: 'divider' }}>
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[50]}
+            labelRowsPerPage="Filas por página:"
+            labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+          />
+        </Box>
       </Card>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>

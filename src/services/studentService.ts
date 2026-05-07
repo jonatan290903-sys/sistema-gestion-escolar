@@ -1,9 +1,9 @@
 import api from './api';
-import { Estudiante, Curso } from '../types';
+import { Estudiante, Curso, PaginatedResponse } from '../types';
 
 export const studentService = {
-  async getEstudiantes(params?: { estado?: string; curso?: number }): Promise<Estudiante[]> {
-    const { data } = await api.get<Estudiante[]>('/api/v1/auth/estudiantes/', { params });
+  async getEstudiantes(params?: { estado?: string; curso?: number; page?: number }): Promise<PaginatedResponse<Estudiante>> {
+    const { data } = await api.get<PaginatedResponse<Estudiante>>('/api/v1/auth/estudiantes/', { params });
     return data;
   },
   async getEstudiante(id: number): Promise<Estudiante> {

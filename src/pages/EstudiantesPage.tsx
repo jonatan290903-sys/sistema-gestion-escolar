@@ -3,7 +3,7 @@ import {
   Box, Typography, Button, Card, Table, TableHead,
   TableRow, TableCell, TableBody, Chip, CircularProgress, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  MenuItem, TableContainer, Tooltip, Alert, FormControlLabel, Switch,
+  MenuItem, TableContainer, Tooltip, Alert, FormControlLabel, Switch, TablePagination
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -20,6 +20,9 @@ const emptyForm = { first_name: '', last_name: '', email: '', numero_expediente:
 
 export default function EstudiantesPage() {
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(50);
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -30,24 +33,38 @@ export default function EstudiantesPage() {
   const { anioActivo, periodoVisor } = useConfig();
   const selectedYear = periodoVisor || anioActivo?.nombre;
 
-  const load = async () => {
+  const load = async (currentPage = page) => {
+    setLoading(true);
     try {
-      const [est, cur] = await Promise.all([studentService.getEstudiantes(), studentService.getCursos()]);
-      setEstudiantes(est);
+      const [res, cur] = await Promise.all([
+        studentService.getEstudiantes({ page: currentPage + 1 }),
+        studentService.getCursos()
+      ]);
+      setEstudiantes(res.results);
+      setTotalCount(res.count);
       setCursos(cur);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(0); setPage(0); }, [filterSinCurso, selectedYear]);
+
+  const handleChangePage = (_: any, newPage: number) => {
+    setPage(newPage);
+    load(newPage);
+  };
 
   const openCreate = () => { setForm(emptyForm); setEditing(null); setError(''); setOpen(true); };
+  
+  // Nota: El filtrado local "filterSinCurso" ahora solo aplica a los resultados de la página actual.
+  // Para un filtrado completo, debería implementarse en el backend.
   const estudiantesFiltrados = estudiantes.filter((e) => {
     if (!filterSinCurso) return true;
     if (!selectedYear) return !e.curso;
     return !e.curso || e.curso.periodo !== selectedYear;
   });
+
   const openEdit = (e: Estudiante) => {
     setForm({ 
       first_name: e.user?.first_name || '',
@@ -79,7 +96,7 @@ export default function EstudiantesPage() {
     load();
   };
 
-  if (loading) return (
+  if (loading && estudiantes.length === 0) return (
     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
       <CircularProgress />
     </Box>
@@ -119,7 +136,11 @@ export default function EstudiantesPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {estudiantesFiltrados.length === 0 && (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center" sx={{ py: 4 }}><CircularProgress size={24} /></TableCell>
+                </TableRow>
+              ) : estudiantesFiltrados.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>
                     {filterSinCurso
@@ -127,27 +148,40 @@ export default function EstudiantesPage() {
                       : 'No hay estudiantes registrados'}
                   </TableCell>
                 </TableRow>
+              ) : (
+                estudiantesFiltrados.map((e) => (
+                  <TableRow key={e.id} hover>
+                    <TableCell>{e.user?.first_name} {e.user?.last_name}</TableCell>
+                    <TableCell>{e.numero_expediente}</TableCell>
+                    <TableCell>{e.documento}</TableCell>
+                    <TableCell>
+                      {e.curso ? (
+                        e.curso.periodo === selectedYear ? e.curso.nombre : `${e.curso.nombre} (${e.curso.periodo})`
+                      ) : '—'}
+                    </TableCell>
+                    <TableCell><Chip label={e.estado} color={ESTADO_COLOR[e.estado]} size="small" /></TableCell>
+                    <TableCell align="right">
+                      <Tooltip title="Editar"><IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="small" /></IconButton></Tooltip>
+                      <Tooltip title="Desactivar"><IconButton size="small" color="error" onClick={() => handleDelete(e.id)}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
-              {estudiantesFiltrados.map((e) => (
-                <TableRow key={e.id} hover>
-                  <TableCell>{e.user.first_name} {e.user.last_name}</TableCell>
-                  <TableCell>{e.numero_expediente}</TableCell>
-                  <TableCell>{e.documento}</TableCell>
-                  <TableCell>
-                    {e.curso ? (
-                      e.curso.periodo === selectedYear ? e.curso.nombre : `${e.curso.nombre} (${e.curso.periodo})`
-                    ) : '—'}
-                  </TableCell>
-                  <TableCell><Chip label={e.estado} color={ESTADO_COLOR[e.estado]} size="small" /></TableCell>
-                  <TableCell align="right">
-                    <Tooltip title="Editar"><IconButton size="small" onClick={() => openEdit(e)}><EditIcon fontSize="small" /></IconButton></Tooltip>
-                    <Tooltip title="Desactivar"><IconButton size="small" color="error" onClick={() => handleDelete(e.id)}><DeleteIcon fontSize="small" /></IconButton></Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Box sx={{ p: 1, borderTop: '1px solid', borderColor: 'divider' }}>
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[50]}
+            labelRowsPerPage="Filas por página:"
+            labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+          />
+        </Box>
       </Card>
 
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
