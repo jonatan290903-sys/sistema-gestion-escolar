@@ -27,8 +27,8 @@ export default function DocentesPage() {
     setLoading(true);
     try {
       const res = await courseService.getDocentes();
-      setDocentes(res.results);
-      setTotalCount(res.count);
+      setDocentes(res?.results || []);
+      setTotalCount(res?.count || 0);
     }
     finally { setLoading(false); }
   };

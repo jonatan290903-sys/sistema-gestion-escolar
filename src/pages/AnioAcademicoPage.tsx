@@ -166,7 +166,7 @@ export default function AnioAcademicoPage() {
 
       {/* Tarjetas de años */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-        {anios.map(anio => (
+        {(anios || []).map(anio => (
           <Box key={anio.id} sx={{ flex: '1 1 300px', minWidth: 280, maxWidth: { xs: '100%', md: '45%', lg: '31%' } }}>
             <Card
               sx={{

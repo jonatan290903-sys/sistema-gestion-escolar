@@ -26,7 +26,9 @@ export default function CursosPage() {
   const load = async () => {
     try {
       const [mat, cur, doc] = await Promise.all([courseService.getMaterias(), studentService.getCursos(), courseService.getDocentes()]);
-      setMaterias(mat); setCursos(cur); setDocentes(doc.results);
+      setMaterias(mat || []);
+      setCursos(cur || []);
+      setDocentes((doc?.results || doc) || []);
     } finally { setLoading(false); }
   };
 
@@ -61,19 +63,19 @@ export default function CursosPage() {
     </Box>
   );
 
-  const materiasPorCurso = cursos.reduce<Record<number, Materia[]>>((acc, curso) => {
+  const materiasPorCurso = (cursos || []).reduce<Record<number, Materia[]>>((acc, curso) => {
     acc[curso.id] = [];
     return acc;
   }, {});
 
-  materias.forEach((m) => {
+  (materias || []).forEach((m) => {
     if (m.curso?.id) {
       materiasPorCurso[m.curso.id] = materiasPorCurso[m.curso.id] || [];
       materiasPorCurso[m.curso.id].push(m);
     }
   });
 
-  const cursosConMaterias = cursos.filter(c => (materiasPorCurso[c.id] || []).length > 0);
+  const cursosConMaterias = (cursos || []).filter(c => (materiasPorCurso[c.id] || []).length > 0);
 
   return (
     <Box>
@@ -158,11 +160,11 @@ export default function CursosPage() {
           <TextField label="Nombre" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} fullWidth />
           <TextField label="Código" value={form.codigo} onChange={e => setForm({ ...form, codigo: e.target.value })} fullWidth />
           <TextField label="Curso" select value={form.curso_id} onChange={e => setForm({ ...form, curso_id: e.target.value })} fullWidth>
-            {cursos.map(c => <MenuItem key={c.id} value={c.id}>{c.nombre}</MenuItem>)}
+            {(cursos || []).map(c => <MenuItem key={c.id} value={c.id}>{c.nombre}</MenuItem>)}
           </TextField>
           <TextField label="Docente" select value={form.docente_id} onChange={e => setForm({ ...form, docente_id: e.target.value })} fullWidth>
             <MenuItem value="">Sin asignar</MenuItem>
-            {docentes.map(d => <MenuItem key={d.id} value={d.id}>{d.user.first_name} {d.user.last_name}</MenuItem>)}
+            {(docentes || []).map(d => <MenuItem key={d.id} value={d.id}>{d.user.first_name} {d.user.last_name}</MenuItem>)}
           </TextField>
           <TextField label="N° de horas" type="number" value={form.numero_horas} onChange={e => setForm({ ...form, numero_horas: e.target.value })} fullWidth />
           <TextField label="Créditos" type="number" value={form.creditos} onChange={e => setForm({ ...form, creditos: e.target.value })} fullWidth />

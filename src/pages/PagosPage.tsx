@@ -35,9 +35,9 @@ export default function PagosPage() {
         paymentService.getPagos({ page: currentPage + 1 }),
         studentService.getEstudiantes({ page: 1 })
       ]);
-      setPagos(pag.results); 
-      setTotalCount(pag.count);
-      setEstudiantes(est.results);
+      setPagos(pag?.results || []);
+      setTotalCount(pag?.count || 0);
+      setEstudiantes(est?.results || []);
     } finally { setLoading(false); }
   };
 

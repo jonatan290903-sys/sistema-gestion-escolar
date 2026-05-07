@@ -79,7 +79,7 @@ export default function Layout() {
                   '& fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
                 }}
               >
-                {anios.map(a => <option key={a.id} value={a.nombre} style={{ color: '#333' }}>{a.nombre}</option>)}
+                {(anios || []).map(a => <option key={a.id} value={a.nombre} style={{ color: '#333' }}>{a.nombre}</option>)}
               </Select>
               <Chip label={trimestreActual} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.25)', color: 'white', fontWeight: 700, fontSize: 11 }} />
             </Box>

@@ -47,10 +47,10 @@ export default function InscripcionesPage() {
         studentService.getEstudiantes({ page: 1 }), // Solo la primera pág para el buscador
         studentService.getCursos(),
       ]);
-      setInscripciones(resInsc.results);
-      setTotalCount(resInsc.count);
-      setEstudiantes(resEst.results);
-      setCursos(cur);
+      setInscripciones(resInsc?.results || []);
+      setTotalCount(resInsc?.count || 0);
+      setEstudiantes(resEst?.results || []);
+      setCursos(cur || []);
     } finally {
       setLoading(false);
     }
@@ -64,15 +64,15 @@ export default function InscripcionesPage() {
     load(newPage);
   };
 
-  const selectedCurso = cursos.find(c => String(c.id) === form.curso_id);
+  const selectedCurso = (cursos || []).find(c => String(c.id) === form.curso_id);
   // Nota: El filtrado por año ahora se hace en la UI pero basado en la página actual.
   // Idealmente el backend debería aceptar el año como filtro.
   const inscripcionesActuales = selectedYear
-    ? inscripciones.filter(ins => ins.curso.periodo === selectedYear && ins.estado === 'activo')
-    : inscripciones.filter(ins => ins.estado === 'activo');
+    ? (inscripciones || []).filter(ins => ins.curso.periodo === selectedYear && ins.estado === 'activo')
+    : (inscripciones || []).filter(ins => ins.estado === 'activo');
   
   const inscritosActuales = new Set(inscripcionesActuales.map(ins => ins.estudiante.id));
-  const estudiantesDisponibles = estudiantes.filter(e => e.estado === 'activo' && !inscritosActuales.has(e.id));
+  const estudiantesDisponibles = (estudiantes || []).filter(e => e.estado === 'activo' && !inscritosActuales.has(e.id));
 
   const openForm = () => { setForm({ estudiante_id: '', curso_id: '' }); setSelectedEstudiante(null); setError(''); setOpen(true); };
 

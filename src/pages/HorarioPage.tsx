@@ -76,7 +76,8 @@ export default function HorarioPage() {
 
   useEffect(() => {
     Promise.all([studentService.getCursos(), courseService.getMaterias()])
-      .then(([c, m]) => { setCursos(c); setMaterias(m); })
+      .then(([c, m]) => { setCursos(c || []); setMaterias(m || []); })
+      .catch(() => { setCursos([]); setMaterias([]); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -87,19 +88,19 @@ export default function HorarioPage() {
         courseService.getHorario(cId),
         courseService.getMaterias(),
       ]);
-      const filtradas = todasMaterias.filter(m => m.curso.id === cId);
+      const filtradas = (todasMaterias || []).filter(m => m.curso?.id === cId);
       setMaterias(filtradas);
-      const loaded: PeriodoLocal[] = horario.periodos.map(p => ({
+      const loaded: PeriodoLocal[] = (horario?.periodos || []).map(p => ({
         localId: newLocalId(),
         orden: p.orden,
         hora_inicio: p.hora_inicio.slice(0, 5),
         hora_fin: p.hora_fin.slice(0, 5),
         clases: {
-          lunes: p.clases.find(c => c.dia === 'lunes')?.materia ?? '',
-          martes: p.clases.find(c => c.dia === 'martes')?.materia ?? '',
-          miercoles: p.clases.find(c => c.dia === 'miercoles')?.materia ?? '',
-          jueves: p.clases.find(c => c.dia === 'jueves')?.materia ?? '',
-          viernes: p.clases.find(c => c.dia === 'viernes')?.materia ?? '',
+          lunes: p.clases?.find(c => c.dia === 'lunes')?.materia ?? '',
+          martes: p.clases?.find(c => c.dia === 'martes')?.materia ?? '',
+          miercoles: p.clases?.find(c => c.dia === 'miercoles')?.materia ?? '',
+          jueves: p.clases?.find(c => c.dia === 'jueves')?.materia ?? '',
+          viernes: p.clases?.find(c => c.dia === 'viernes')?.materia ?? '',
         } as Record<Dia, number | ''>,
       }));
       setPeriodos(loaded);
