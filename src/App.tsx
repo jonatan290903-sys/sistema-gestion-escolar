@@ -40,17 +40,94 @@ const AnioAcademicoPage = lazyRetry(() => import('./pages/AnioAcademicoPage'));
 
 const theme = createTheme({
   palette: {
-    primary: { main: '#1976d2' },
-    secondary: { main: '#9c27b0' },
-    background: { default: '#f5f5f5' },
+    primary: {
+      main: '#1B5E20',
+      light: '#388E3C',
+      dark: '#145214',
+      contrastText: '#FFFFFF',
+    },
+    secondary: {
+      main: '#E65100',
+      light: '#FF8A50',
+      dark: '#BF360C',
+      contrastText: '#FFFFFF',
+    },
+    info: {
+      main: '#1565C0',
+      contrastText: '#FFFFFF',
+    },
+    background: {
+      default: '#F5F6F5',
+      paper: '#FFFFFF',
+    },
+    text: {
+      primary: '#1A1A1A',
+      secondary: '#5A6370',
+    },
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h4: { fontWeight: 700, letterSpacing: '-0.02em' },
+    h5: { fontWeight: 700, letterSpacing: '-0.01em' },
+    h6: { fontWeight: 600, letterSpacing: '-0.01em' },
+    body1: { fontSize: '0.9375rem' },
+    body2: { fontSize: '0.875rem' },
+    caption: { fontSize: '0.75rem' },
   },
   shape: { borderRadius: 8 },
   components: {
-    MuiButton: { styleOverrides: { root: { textTransform: 'none', fontWeight: 600 } } },
-    MuiCard: { styleOverrides: { root: { backgroundImage: 'none' } } },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          fontWeight: 600,
+          boxShadow: 'none',
+          minHeight: 44,
+          '&:hover': { boxShadow: 'none' },
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05)',
+          border: '1px solid #E8EAE8',
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#1B5E20',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            '&.Mui-focused fieldset': { borderColor: '#1B5E20' },
+            '& input': { fontSize: '1rem' },
+          },
+          '& label.Mui-focused': { color: '#1B5E20' },
+        },
+      },
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: { minHeight: 44 },
+      },
+    },
+    MuiChip: {
+      styleOverrides: { root: { fontWeight: 600 } },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: { minWidth: 44, minHeight: 44 },
+      },
+    },
   },
 });
 
