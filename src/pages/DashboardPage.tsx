@@ -126,7 +126,7 @@ export default function DashboardPage() {
                         secondary={
                           <>
                             <Typography component="span" variant="caption" color="text.primary">{c.fecha_creacion?.split('T')[0]}</Typography>
-                            {" — "}{c.contenido}
+                            {"–"}{c.contenido}
                           </>
                         }
                       />

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import api from '../services/api';
 import { useAuth } from './AuthContext';
 
-export interface Trimestre {
+interface Trimestre {
   id: number;
   nombre: 'T1' | 'T2' | 'T3';
   fecha_inicio: string;

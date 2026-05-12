@@ -108,7 +108,7 @@ export interface ResumenAsistencia {
   licencias: number;
 }
 
-export interface CentroNotasRow {
+interface CentroNotasRow {
   estudiante_id: number;
   nombre: string;
   notas: Record<string, number | null>;
@@ -135,14 +135,14 @@ export interface Pago {
   created_at: string;
 }
 
-export interface ClaseHorario {
+interface ClaseHorario {
   id: number;
   dia: 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes';
   materia: number | null;
   materia_nombre: string | null;
 }
 
-export interface PeriodoHorario {
+interface PeriodoHorario {
   id: number;
   orden: number;
   hora_inicio: string;

@@ -153,7 +153,7 @@ export default function InscripcionesPage() {
                     <TableCell>
                       {ins.curso.periodo
                         ? <Chip label={ins.curso.periodo} size="small" color="primary" variant="outlined" />
-                        : <Typography variant="caption" color="text.disabled">—</Typography>}
+                        : <Typography variant="caption" color="text.disabled">{'—'}</Typography>}
                     </TableCell>
                     <TableCell>{new Date(ins.fecha_inscripcion).toLocaleDateString('es-PE')}</TableCell>
                     <TableCell>

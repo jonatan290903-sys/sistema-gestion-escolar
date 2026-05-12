@@ -153,7 +153,7 @@ export default function AnioAcademicoPage() {
           icon={<CalendarMonthIcon />}
           sx={{ mb: 3, borderRadius: 2 }}
         >
-          <strong>Año activo: {anioActivo.nombre}</strong> — Trimestre en curso:{' '}
+          <strong>Año activo: {anioActivo.nombre}</strong>{' — '}Trimestre en curso:{' '}
           <Chip label={trimestreActual} size="small" color="primary" sx={{ fontWeight: 700, ml: 0.5 }} />
         </Alert>
       )}

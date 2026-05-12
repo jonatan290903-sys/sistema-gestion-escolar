@@ -98,7 +98,7 @@ function TabHorario({ cursoId, cursoNombre }: { cursoId: number; cursoNombre: st
                             ? <Typography variant="caption" sx={{ fontWeight: 700, color, lineHeight: 1.3, display: 'block' }}>
                                 {nombre}
                               </Typography>
-                            : <Typography variant="caption" color="text.disabled">—</Typography>}
+                            : <Typography variant="caption" color="text.disabled">{'—'}</Typography>}
                         </TableCell>
                       );
                     })}
@@ -129,7 +129,7 @@ function TabHorario({ cursoId, cursoNombre }: { cursoId: number; cursoNombre: st
 
 function GradeChip({ nota }: { nota: number | null }) {
   if (nota === null) {
-    return <Typography variant="body2" color="text.disabled">—</Typography>;
+    return <Typography variant="body2" color="text.disabled">{'—'}</Typography>;
   }
   return <Typography variant="body2" sx={{ fontWeight: 700, color: 'text.primary' }}>●</Typography>;
 }

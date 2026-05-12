@@ -205,7 +205,7 @@ export default function HorarioPage() {
           onChange={e => handleCursoChange(e.target.value)}
           sx={{ minWidth: 300 }}
         >
-          <MenuItem value=""><em>— Elige un curso —</em></MenuItem>
+          <MenuItem value=""><em>- Elige un curso -</em></MenuItem>
           {cursos.filter(c => c.estado).map(c => (
             <MenuItem key={c.id} value={String(c.id)}>
               {c.nombre}{c.periodo ? ` — ${c.periodo}` : ''}

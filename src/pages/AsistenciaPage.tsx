@@ -113,7 +113,7 @@ function TabDiaria({ cursos }: { cursos: Curso[] }) {
           select label="Curso" value={cursoId}
           onChange={e => setCursoId(e.target.value)} sx={{ minWidth: 240 }}
         >
-          <MenuItem value=""><em>— Selecciona un curso —</em></MenuItem>
+          <MenuItem value=""><em>- Selecciona un curso -</em></MenuItem>
           {cursos.map(c => (
             <MenuItem key={c.id} value={String(c.id)}>{c.nombre}{c.periodo ? ` — ${c.periodo}` : ''}</MenuItem>
           ))}
@@ -161,7 +161,7 @@ function TabDiaria({ cursos }: { cursos: Curso[] }) {
                     align="center"
                     sx={{ bgcolor: '#f5f5f5', fontWeight: 700, fontSize: '0.95rem', py: 1.5, borderBottom: '2px solid #e0e0e0' }}
                   >
-                    {dia ? DIA_DISPLAY[dia] : ''} — {fecha}
+                    {dia ? DIA_DISPLAY[dia] : ''} – {fecha}
                   </TableCell>
                 </TableRow>
                 {/* Column headers */}
@@ -214,7 +214,7 @@ function TabDiaria({ cursos }: { cursos: Curso[] }) {
                         <TableCell key={m.id} align="center" sx={{ borderRight: '1px solid #f0f0f0' }}>
                           {estado
                             ? <Chip label={estado} size="small" sx={{ bgcolor: ESTADO_COLORS[estado], color: 'white', fontWeight: 700, minWidth: 36 }} />
-                            : <Typography variant="caption" color="text.disabled">—</Typography>}
+                            : <Typography variant="caption" color="text.disabled">{'—'}</Typography>}
                         </TableCell>
                       );
                     })}
@@ -274,7 +274,7 @@ function TabResumen() {
         select label="Seleccionar materia" value={materiaId}
         onChange={e => setMateriaId(e.target.value)} sx={{ minWidth: 300, mb: 3 }}
       >
-        <MenuItem value=""><em>— Selecciona una materia —</em></MenuItem>
+        <MenuItem value=""><em>- Selecciona una materia -</em></MenuItem>
         {materias.map(m => <MenuItem key={m.id} value={String(m.id)}>{m.nombre} ({m.codigo})</MenuItem>)}
       </TextField>
 

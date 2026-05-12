@@ -12,7 +12,7 @@ const TRIMESTRES = ['T1', 'T2', 'T3'] as const;
 const TRIMESTRE_LABEL: Record<string, string> = { T1: 'Trimestre 1', T2: 'Trimestre 2', T3: 'Trimestre 3' };
 
 function notaDisplay(nota: number | null | undefined) {
-  if (nota === null || nota === undefined) return <Typography variant="body2" color="text.disabled">—</Typography>;
+  if (nota === null || nota === undefined) return <Typography variant="body2" color="text.disabled">{'—'}</Typography>;
   const color = nota >= 65 ? '#2e7d32' : nota >= 51 ? '#e65100' : '#c62828';
   return <Typography variant="body2" sx={{ fontWeight: 700, color }}>{nota.toFixed(1)}</Typography>;
 }
@@ -60,7 +60,7 @@ export default function CalificacionesPage() {
             select label="Seleccionar materia" value={materiaId}
             onChange={e => setMateriaId(e.target.value)} sx={{ minWidth: { xs: '100%', sm: 300 } }}
           >
-            <MenuItem value=""><em>— Selecciona una materia —</em></MenuItem>
+            <MenuItem value=""><em>- Selecciona una materia -</em></MenuItem>
             {materias.map(m => <MenuItem key={m.id} value={String(m.id)}>{m.nombre} ({m.codigo})</MenuItem>)}
           </TextField>
           {materiaId && (
