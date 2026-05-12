@@ -285,7 +285,7 @@ export default function Layout() {
         {drawerContent}
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3, mt: { xs: 8, md: 0 }, bgcolor: '#F4F6F4', minHeight: '100vh' }}>
+      <Box component="main" sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 }, mt: { xs: 8, md: 0 }, bgcolor: '#F4F6F4', minHeight: '100vh' }}>
         <Outlet />
       </Box>
     </Box>

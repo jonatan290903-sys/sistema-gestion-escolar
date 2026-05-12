@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, Button, Table, TableHead, TableRow, TableCell, TableBody,
   CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, MenuItem, TableContainer, Card, Alert, Chip, Grid, TablePagination
+  TextField, MenuItem, TableContainer, Card, Alert, Chip, Grid, TablePagination,
+  useTheme, useMediaQuery,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
@@ -18,6 +19,8 @@ const CONCEPTOS = ['matricula', 'pension', 'matricula_pension', 'actividades', '
 const emptyForm = { estudiante_id: '', monto: '', concepto: 'pension', fecha_vencimiento: '', estado: 'pendiente', metodo_pago: '', notas: '' };
 
 export default function PagosPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [pagos, setPagos] = useState<Pago[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
@@ -75,10 +78,10 @@ export default function PagosPage() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>Pagos</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(emptyForm); setError(''); setOpen(true); }} sx={{ borderRadius: 2 }}>
-          Registrar Pago
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, gap: 1.5 }}>
+        <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.15rem', md: '1.35rem' } }}>Pagos</Typography>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(emptyForm); setError(''); setOpen(true); }} sx={{ borderRadius: 2, flexShrink: 0 }}>
+          Registrar
         </Button>
       </Box>
 
@@ -100,8 +103,8 @@ export default function PagosPage() {
       </Grid>
 
       <Card sx={{ borderRadius: 3, boxShadow: 2 }}>
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: 550 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.50' }}>
                 {['Estudiante', 'Concepto', 'Monto', 'Vencimiento', 'Estado', 'Acciones'].map(h => <TableCell key={h}><b>{h}</b></TableCell>)}
@@ -146,7 +149,7 @@ export default function PagosPage() {
         </Box>
       </Card>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth fullScreen={isMobile}>
         <DialogTitle>Registrar Pago</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}

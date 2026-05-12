@@ -21,13 +21,13 @@ interface StatCardProps {
 function StatCard({ label, value, icon, color, sub }: StatCardProps) {
   return (
     <Card sx={{ borderRadius: 3, boxShadow: 2, height: '100%' }}>
-      <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 3 }}>
-        <Box sx={{ width: 56, height: 56, borderRadius: 2, bgcolor: color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+      <CardContent sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 2 }, p: { xs: 2, md: 3 }, '&:last-child': { pb: { xs: 2, md: 3 } } }}>
+        <Box sx={{ width: { xs: 44, md: 56 }, height: { xs: 44, md: 56 }, borderRadius: 2, bgcolor: color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
           {icon}
         </Box>
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>{value}</Typography>
-          <Typography variant="body2" color="text.secondary">{label}</Typography>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.5rem', md: '2rem' }, lineHeight: 1.2 }}>{value}</Typography>
+          <Typography variant="body2" color="text.secondary" noWrap>{label}</Typography>
           {sub && <Typography variant="caption" color="text.secondary">{sub}</Typography>}
         </Box>
       </CardContent>
@@ -64,11 +64,11 @@ export default function DashboardPage() {
 
   return (
     <Box>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700 }} color="text.primary">
-          {greeting}, {user?.first_name} 👋
+      <Box sx={{ mb: { xs: 2.5, md: 4 } }}>
+        <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.3rem', md: '1.75rem' }, lineHeight: 1.25 }} color="text.primary">
+          {greeting}, {user?.first_name}
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
           Resumen del sistema de gestión escolar
         </Typography>
       </Box>

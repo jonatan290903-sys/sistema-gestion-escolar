@@ -53,12 +53,12 @@ export default function CalificacionesPage() {
 
   return (
     <Box>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>Calificaciones por Materia</Typography>
+      <Box sx={{ mb: 2.5 }}>
+        <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.15rem', md: '1.35rem' }, mb: 2 }}>Calificaciones por Materia</Typography>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <TextField
             select label="Seleccionar materia" value={materiaId}
-            onChange={e => setMateriaId(e.target.value)} sx={{ minWidth: 300 }}
+            onChange={e => setMateriaId(e.target.value)} sx={{ minWidth: { xs: '100%', sm: 300 } }}
           >
             <MenuItem value=""><em>— Selecciona una materia —</em></MenuItem>
             {materias.map(m => <MenuItem key={m.id} value={String(m.id)}>{m.nombre} ({m.codigo})</MenuItem>)}

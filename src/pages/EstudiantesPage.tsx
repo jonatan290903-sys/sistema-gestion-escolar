@@ -3,7 +3,8 @@ import {
   Box, Typography, Button, Card, Table, TableHead,
   TableRow, TableCell, TableBody, Chip, CircularProgress, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  MenuItem, TableContainer, Tooltip, Alert, FormControlLabel, Switch, TablePagination
+  MenuItem, TableContainer, Tooltip, Alert, FormControlLabel, Switch, TablePagination,
+  useTheme, useMediaQuery,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -19,6 +20,8 @@ const ESTADO_COLOR: Record<string, any> = {
 const emptyForm = { first_name: '', last_name: '', email: '', numero_expediente: '', documento: '', fecha_nacimiento: '', curso_id: '', estado: 'activo' };
 
 export default function EstudiantesPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
   const rowsPerPage = 50;
@@ -105,27 +108,28 @@ export default function EstudiantesPage() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700 }}>Estudiantes</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {selectedYear ? `Año escolar activo: ${selectedYear}` : 'Selecciona un año escolar activo'}
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-          <FormControlLabel
-            control={<Switch checked={filterSinCurso} onChange={e => setFilterSinCurso(e.target.checked)} color="primary" />}
-            label="Solo sin curso en año activo"
-          />
-          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2 }}>
-            Nuevo Estudiante
+      <Box sx={{ mb: 2.5 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 1.5 }}>
+          <Box>
+            <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.15rem', md: '1.35rem' } }}>Estudiantes</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {selectedYear ? `Año: ${selectedYear}` : 'Sin año escolar activo'}
+            </Typography>
+          </Box>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2, flexShrink: 0 }}>
+            Nuevo
           </Button>
         </Box>
+        <FormControlLabel
+          sx={{ mt: 1 }}
+          control={<Switch checked={filterSinCurso} onChange={e => setFilterSinCurso(e.target.checked)} color="primary" size="small" />}
+          label={<Typography variant="caption">Solo sin curso en año activo</Typography>}
+        />
       </Box>
 
       <Card sx={{ borderRadius: 3, boxShadow: 2 }}>
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: 600 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.50' }}>
                 <TableCell><b>Nombre</b></TableCell>
@@ -185,7 +189,7 @@ export default function EstudiantesPage() {
         </Box>
       </Card>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth fullScreen={isMobile}>
         <DialogTitle>{editing ? 'Editar Estudiante' : 'Nuevo Estudiante'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}

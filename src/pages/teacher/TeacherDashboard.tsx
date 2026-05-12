@@ -71,11 +71,11 @@ export default function TeacherDashboard() {
 
   return (
     <Box>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+      <Box sx={{ mb: { xs: 2.5, md: 4 } }}>
+        <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.2rem', md: '1.6rem' }, lineHeight: 1.25 }}>
           Bienvenido, Prof. {user?.first_name} {user?.last_name}
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
           Selecciona una materia para gestionar asistencia, actividades y calificaciones
         </Typography>
       </Box>

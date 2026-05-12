@@ -3,6 +3,7 @@ import {
   Box, Typography, Button, Table, TableHead, TableRow, TableCell, TableBody,
   Chip, CircularProgress, IconButton, Dialog, DialogTitle, DialogContent,
   DialogActions, TextField, MenuItem, TableContainer, Card, Tooltip, Alert,
+  useTheme, useMediaQuery,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,6 +15,8 @@ import { Materia, Curso, Docente } from '../types';
 const emptyForm = { nombre: '', codigo: '', curso_id: '', docente_id: '', descripcion: '', numero_horas: '', creditos: 0 };
 
 export default function CursosPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [docentes, setDocentes] = useState<Docente[]>([]);
@@ -79,17 +82,14 @@ export default function CursosPage() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700 }}>Materias</Typography>
-          <Typography variant="body2" color="text.secondary">Gestiona materias y revisa los cursos que tienen materias vinculadas.</Typography>
-        </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2 }}>Nueva Materia</Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, gap: 1.5 }}>
+        <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.15rem', md: '1.35rem' } }}>Materias</Typography>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2, flexShrink: 0 }}>Nueva</Button>
       </Box>
 
       <Card sx={{ borderRadius: 3, boxShadow: 2, mb: 4 }}>
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: 600 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.50' }}>
                 {['Nombre', 'Código', 'Curso', 'Docente', 'Horas', 'Estado', 'Acciones'].map(h => (
@@ -122,8 +122,8 @@ export default function CursosPage() {
 
       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Cursos con materias vinculadas</Typography>
       <Card sx={{ borderRadius: 3, boxShadow: 2, mb: 4 }}>
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: 400 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.50' }}>
                 <TableCell><b>Curso</b></TableCell>
@@ -153,7 +153,7 @@ export default function CursosPage() {
         </TableContainer>
       </Card>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth fullScreen={isMobile}>
         <DialogTitle>{editing ? 'Editar Materia' : 'Nueva Materia'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}

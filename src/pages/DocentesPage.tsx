@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, Button, Table, TableHead, TableRow, TableCell, TableBody,
   Chip, CircularProgress, IconButton, Dialog, DialogTitle, DialogContent,
-  DialogActions, TextField, MenuItem, TableContainer, Card, Tooltip, Alert, TablePagination
+  DialogActions, TextField, MenuItem, TableContainer, Card, Tooltip, Alert, TablePagination,
+  useTheme, useMediaQuery,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,6 +14,8 @@ import { Docente } from '../types';
 const emptyForm = { first_name: '', last_name: '', email: '', especialidad: '', titulo_profesional: '', documento: '', fecha_contratacion: '', estado: 'activo' };
 
 export default function DocentesPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [docentes, setDocentes] = useState<Docente[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const rowsPerPage = 50;
@@ -75,16 +78,16 @@ export default function DocentesPage() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>Docentes</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2 }}>
-          Nuevo Docente
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5, gap: 1.5 }}>
+        <Typography sx={{ fontWeight: 700, fontSize: { xs: '1.15rem', md: '1.35rem' } }}>Docentes</Typography>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} sx={{ borderRadius: 2, flexShrink: 0 }}>
+          Nuevo
         </Button>
       </Box>
 
       <Card sx={{ borderRadius: 3, boxShadow: 2 }}>
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ overflowX: 'auto' }}>
+          <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.50' }}>
                 <TableCell><b>Nombre</b></TableCell>
@@ -132,7 +135,7 @@ export default function DocentesPage() {
         </Box>
       </Card>
 
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth fullScreen={isMobile}>
         <DialogTitle>{editing ? 'Editar Docente' : 'Nuevo Docente'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
