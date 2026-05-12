@@ -106,7 +106,7 @@ export default function ProfilePage() {
                       label="Nombre"
                       fullWidth
                       value={profileForm.first_name}
-                      onChange={e => setProfileForm({ ...profileForm, first_name: e.target.value })}
+                      onChange={e => setProfileForm(prev => ({ ...prev, first_name: e.target.value }))}
                     />
                   </Grid>
                   <Grid size={{ xs: 6 }}>
@@ -114,7 +114,7 @@ export default function ProfilePage() {
                       label="Apellido"
                       fullWidth
                       value={profileForm.last_name}
-                      onChange={e => setProfileForm({ ...profileForm, last_name: e.target.value })}
+                      onChange={e => setProfileForm(prev => ({ ...prev, last_name: e.target.value }))}
                     />
                   </Grid>
                 </Grid>
@@ -131,7 +131,7 @@ export default function ProfilePage() {
                   label="Teléfono"
                   fullWidth
                   value={profileForm.phone}
-                  onChange={e => setProfileForm({ ...profileForm, phone: e.target.value })}
+                  onChange={e => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
                 />
 
                 <TextField
@@ -140,7 +140,7 @@ export default function ProfilePage() {
                   multiline
                   rows={2}
                   value={profileForm.address}
-                  onChange={e => setProfileForm({ ...profileForm, address: e.target.value })}
+                  onChange={e => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
                 />
 
                 <Button
@@ -194,7 +194,7 @@ export default function ProfilePage() {
                     fullWidth
                     required
                     value={passForm.old_password}
-                    onChange={e => setPassForm({ ...passForm, old_password: e.target.value })}
+                    onChange={e => setPassForm(prev => ({ ...prev, old_password: e.target.value }))}
                     slotProps={{
                       input: {
                         endAdornment: (
@@ -214,7 +214,7 @@ export default function ProfilePage() {
                     fullWidth
                     required
                     value={passForm.new_password}
-                    onChange={e => setPassForm({ ...passForm, new_password: e.target.value })}
+                    onChange={e => setPassForm(prev => ({ ...prev, new_password: e.target.value }))}
                     slotProps={{
                       input: {
                         endAdornment: (
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                     fullWidth
                     required
                     value={passForm.new_password2}
-                    onChange={e => setPassForm({ ...passForm, new_password2: e.target.value })}
+                    onChange={e => setPassForm(prev => ({ ...prev, new_password2: e.target.value }))}
                   />
                   <Button
                     type="submit"

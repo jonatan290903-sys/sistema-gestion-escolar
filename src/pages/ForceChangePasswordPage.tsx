@@ -110,7 +110,7 @@ export default function ForceChangePasswordPage() {
                 label="Contraseña Actual (tu documento)"
                 type={showOldPass ? 'text' : 'password'}
                 value={form.old_password}
-                onChange={(e) => setForm({ ...form, old_password: e.target.value })}
+                onChange={(e) => setForm(prev => ({ ...prev, old_password: e.target.value }))}
                 required
                 fullWidth
                 slotProps={{
@@ -130,7 +130,7 @@ export default function ForceChangePasswordPage() {
                 label="Nueva Contraseña"
                 type={showNewPass ? 'text' : 'password'}
                 value={form.new_password}
-                onChange={(e) => setForm({ ...form, new_password: e.target.value })}
+                onChange={(e) => setForm(prev => ({ ...prev, new_password: e.target.value }))}
                 required
                 fullWidth
                 helperText="Mínimo 8 caracteres"
@@ -151,7 +151,7 @@ export default function ForceChangePasswordPage() {
                 label="Confirmar Nueva Contraseña"
                 type={showNewPass ? 'text' : 'password'}
                 value={form.new_password2}
-                onChange={(e) => setForm({ ...form, new_password2: e.target.value })}
+                onChange={(e) => setForm(prev => ({ ...prev, new_password2: e.target.value }))}
                 required
                 fullWidth
                 slotProps={{

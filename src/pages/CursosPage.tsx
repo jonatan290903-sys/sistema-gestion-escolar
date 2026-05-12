@@ -157,18 +157,18 @@ export default function CursosPage() {
         <DialogTitle>{editing ? 'Editar Materia' : 'Nueva Materia'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
-          <TextField label="Nombre" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} fullWidth />
-          <TextField label="Código" value={form.codigo} onChange={e => setForm({ ...form, codigo: e.target.value })} fullWidth />
-          <TextField label="Curso" select value={form.curso_id} onChange={e => setForm({ ...form, curso_id: e.target.value })} fullWidth>
+          <TextField label="Nombre" value={form.nombre} onChange={e => setForm(prev => ({ ...prev, nombre: e.target.value }))} fullWidth />
+          <TextField label="Código" value={form.codigo} onChange={e => setForm(prev => ({ ...prev, codigo: e.target.value }))} fullWidth />
+          <TextField label="Curso" select value={form.curso_id} onChange={e => setForm(prev => ({ ...prev, curso_id: e.target.value }))} fullWidth>
             {(cursos || []).map(c => <MenuItem key={c.id} value={c.id}>{c.nombre}</MenuItem>)}
           </TextField>
-          <TextField label="Docente" select value={form.docente_id} onChange={e => setForm({ ...form, docente_id: e.target.value })} fullWidth>
+          <TextField label="Docente" select value={form.docente_id} onChange={e => setForm(prev => ({ ...prev, docente_id: e.target.value }))} fullWidth>
             <MenuItem value="">Sin asignar</MenuItem>
             {(docentes || []).map(d => <MenuItem key={d.id} value={d.id}>{d.user.first_name} {d.user.last_name}</MenuItem>)}
           </TextField>
-          <TextField label="N° de horas" type="number" value={form.numero_horas} onChange={e => setForm({ ...form, numero_horas: e.target.value })} fullWidth />
-          <TextField label="Créditos" type="number" value={form.creditos} onChange={e => setForm({ ...form, creditos: e.target.value })} fullWidth />
-          <TextField label="Descripción" multiline rows={2} value={form.descripcion} onChange={e => setForm({ ...form, descripcion: e.target.value })} fullWidth />
+          <TextField label="N° de horas" type="number" value={form.numero_horas} onChange={e => setForm(prev => ({ ...prev, numero_horas: e.target.value }))} fullWidth />
+          <TextField label="Créditos" type="number" value={form.creditos} onChange={e => setForm(prev => ({ ...prev, creditos: e.target.value }))} fullWidth />
+          <TextField label="Descripción" multiline rows={2} value={form.descripcion} onChange={e => setForm(prev => ({ ...prev, descripcion: e.target.value }))} fullWidth />
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button onClick={() => setOpen(false)}>Cancelar</Button>

@@ -153,16 +153,16 @@ export default function PagosPage() {
         <DialogTitle>Registrar Pago</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
-          <TextField label="Estudiante" select value={form.estudiante_id} onChange={e => setForm({ ...form, estudiante_id: e.target.value })} fullWidth>
+          <TextField label="Estudiante" select value={form.estudiante_id} onChange={e => setForm(prev => ({ ...prev, estudiante_id: e.target.value }))} fullWidth>
             {estudiantes.map(e => <MenuItem key={e.id} value={e.id}>{e.user.first_name} {e.user.last_name}</MenuItem>)}
           </TextField>
-          <TextField label="Concepto" select value={form.concepto} onChange={e => setForm({ ...form, concepto: e.target.value })} fullWidth>
+          <TextField label="Concepto" select value={form.concepto} onChange={e => setForm(prev => ({ ...prev, concepto: e.target.value }))} fullWidth>
             {CONCEPTOS.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
           </TextField>
-          <TextField label="Monto (S/)" type="number" value={form.monto} onChange={e => setForm({ ...form, monto: e.target.value })} fullWidth slotProps={{ htmlInput: { min: 0, step: 0.01 } }} />
-          <TextField label="Fecha de vencimiento" type="date" value={form.fecha_vencimiento} onChange={e => setForm({ ...form, fecha_vencimiento: e.target.value })} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
-          <TextField label="Método de pago" value={form.metodo_pago} onChange={e => setForm({ ...form, metodo_pago: e.target.value })} fullWidth placeholder="Efectivo, Transferencia, Tarjeta..." />
-          <TextField label="Notas" multiline rows={2} value={form.notas} onChange={e => setForm({ ...form, notas: e.target.value })} fullWidth />
+          <TextField label="Monto (S/)" type="number" value={form.monto} onChange={e => setForm(prev => ({ ...prev, monto: e.target.value }))} fullWidth slotProps={{ htmlInput: { min: 0, step: 0.01 } }} />
+          <TextField label="Fecha de vencimiento" type="date" value={form.fecha_vencimiento} onChange={e => setForm(prev => ({ ...prev, fecha_vencimiento: e.target.value }))} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
+          <TextField label="Método de pago" value={form.metodo_pago} onChange={e => setForm(prev => ({ ...prev, metodo_pago: e.target.value }))} fullWidth placeholder="Efectivo, Transferencia, Tarjeta..." />
+          <TextField label="Notas" multiline rows={2} value={form.notas} onChange={e => setForm(prev => ({ ...prev, notas: e.target.value }))} fullWidth />
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button onClick={() => setOpen(false)}>Cancelar</Button>

@@ -193,17 +193,17 @@ export default function EstudiantesPage() {
         <DialogTitle>{editing ? 'Editar Estudiante' : 'Nuevo Estudiante'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
-          <TextField label="Nombres" value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} fullWidth />
-          <TextField label="Apellidos" value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} fullWidth />
-          <TextField label="Email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} fullWidth />
-          <TextField label="N° Expediente" value={form.numero_expediente} onChange={e => setForm({ ...form, numero_expediente: e.target.value })} fullWidth />
-          <TextField label="Documento" value={form.documento} onChange={e => setForm({ ...form, documento: e.target.value })} fullWidth />
-          <TextField label="Fecha de nacimiento" type="date" value={form.fecha_nacimiento} onChange={e => setForm({ ...form, fecha_nacimiento: e.target.value })} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
-          <TextField label="Curso" select value={form.curso_id} onChange={e => setForm({ ...form, curso_id: e.target.value })} fullWidth>
+          <TextField label="Nombres" value={form.first_name} onChange={e => setForm(prev => ({ ...prev, first_name: e.target.value }))} fullWidth />
+          <TextField label="Apellidos" value={form.last_name} onChange={e => setForm(prev => ({ ...prev, last_name: e.target.value }))} fullWidth />
+          <TextField label="Email" type="email" value={form.email} onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))} fullWidth />
+          <TextField label="N° Expediente" value={form.numero_expediente} onChange={e => setForm(prev => ({ ...prev, numero_expediente: e.target.value }))} fullWidth />
+          <TextField label="Documento" value={form.documento} onChange={e => setForm(prev => ({ ...prev, documento: e.target.value }))} fullWidth />
+          <TextField label="Fecha de nacimiento" type="date" value={form.fecha_nacimiento} onChange={e => setForm(prev => ({ ...prev, fecha_nacimiento: e.target.value }))} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
+          <TextField label="Curso" select value={form.curso_id} onChange={e => setForm(prev => ({ ...prev, curso_id: e.target.value }))} fullWidth>
             <MenuItem value="">Sin asignar</MenuItem>
             {cursos.map(c => <MenuItem key={c.id} value={c.id}>{c.nombre}</MenuItem>)}
           </TextField>
-          <TextField label="Estado" select value={form.estado} onChange={e => setForm({ ...form, estado: e.target.value })} fullWidth>
+          <TextField label="Estado" select value={form.estado} onChange={e => setForm(prev => ({ ...prev, estado: e.target.value }))} fullWidth>
             {['activo', 'inactivo', 'retirado', 'egresado'].map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
           </TextField>
         </DialogContent>

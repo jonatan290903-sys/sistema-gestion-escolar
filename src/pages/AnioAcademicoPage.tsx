@@ -249,10 +249,10 @@ export default function AnioAcademicoPage() {
             <TextField
               label="Nombre del año" value={form.nombre} fullWidth required
               placeholder="Ej: 2025"
-              onChange={e => setForm({ ...form, nombre: e.target.value })}
+              onChange={e => setForm(prev => ({ ...prev, nombre: e.target.value }))}
             />
             <FormControlLabel
-              control={<Switch checked={form.activo} onChange={e => setForm({ ...form, activo: e.target.checked })} color="primary" />}
+              control={<Switch checked={form.activo} onChange={e => setForm(prev => ({ ...prev, activo: e.target.checked }))} color="primary" />}
               label="Activo"
               sx={{ minWidth: 90 }}
             />
@@ -261,12 +261,12 @@ export default function AnioAcademicoPage() {
           <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField
               label="Inicio del año" type="date" value={form.fecha_inicio} fullWidth required
-              onChange={e => setForm({ ...form, fecha_inicio: e.target.value })}
+              onChange={e => setForm(prev => ({ ...prev, fecha_inicio: e.target.value }))}
               slotProps={{ inputLabel: { shrink: true } }}
             />
             <TextField
               label="Fin del año" type="date" value={form.fecha_fin} fullWidth required
-              onChange={e => setForm({ ...form, fecha_fin: e.target.value })}
+              onChange={e => setForm(prev => ({ ...prev, fecha_fin: e.target.value }))}
               slotProps={{ inputLabel: { shrink: true } }}
             />
           </Box>

@@ -205,7 +205,7 @@ export default function InscripcionesPage() {
             value={selectedEstudiante}
             onChange={(_, value) => {
               setSelectedEstudiante(value);
-              setForm({ ...form, estudiante_id: value ? String(value.id) : '' });
+              setForm(prev => ({ ...prev, estudiante_id: value ? String(value.id) : '' }));
             }}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             getOptionLabel={(option) => `${option.user.first_name} ${option.user.last_name} — ${option.numero_expediente}`}

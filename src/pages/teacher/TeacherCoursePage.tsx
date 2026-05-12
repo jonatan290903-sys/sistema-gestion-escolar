@@ -549,17 +549,17 @@ function TabActividades({ cursoId }: { cursoId: number }) {
         <DialogTitle>{editing ? 'Editar Actividad' : 'Nueva Actividad'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
-          <TextField label="Nombre" value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} fullWidth required />
-          <TextField label="Descripción" multiline rows={2} value={form.descripcion} onChange={e => setForm({ ...form, descripcion: e.target.value })} fullWidth />
+          <TextField label="Nombre" value={form.nombre} onChange={e => setForm(prev => ({ ...prev, nombre: e.target.value }))} fullWidth required />
+          <TextField label="Descripción" multiline rows={2} value={form.descripcion} onChange={e => setForm(prev => ({ ...prev, descripcion: e.target.value }))} fullWidth />
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <TextField label="Tipo" select value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })} fullWidth>
+            <TextField label="Tipo" select value={form.tipo} onChange={e => setForm(prev => ({ ...prev, tipo: e.target.value }))} fullWidth>
               {TIPOS.map(t => <MenuItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</MenuItem>)}
             </TextField>
-            <TextField label="Trimestre" select value={form.trimestre} onChange={e => setForm({ ...form, trimestre: e.target.value })} fullWidth required>
+            <TextField label="Trimestre" select value={form.trimestre} onChange={e => setForm(prev => ({ ...prev, trimestre: e.target.value }))} fullWidth required>
               {TRIMESTRES.map(t => <MenuItem key={t} value={t}>{TRIMESTRE_LABEL[t]}</MenuItem>)}
             </TextField>
           </Box>
-          <TextField label="Fecha" type="date" value={form.fecha} onChange={e => setForm({ ...form, fecha: e.target.value })} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
+          <TextField label="Fecha" type="date" value={form.fecha} onChange={e => setForm(prev => ({ ...prev, fecha: e.target.value }))} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button onClick={() => setOpen(false)}>Cancelar</Button>

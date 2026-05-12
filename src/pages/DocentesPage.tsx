@@ -139,14 +139,14 @@ export default function DocentesPage() {
         <DialogTitle>{editing ? 'Editar Docente' : 'Nuevo Docente'}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
           {error && <Alert severity="error">{error}</Alert>}
-          <TextField label="Nombres" value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} fullWidth />
-          <TextField label="Apellidos" value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} fullWidth />
-          <TextField label="Email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} fullWidth />
-          <TextField label="Documento" value={form.documento} onChange={e => setForm({ ...form, documento: e.target.value })} fullWidth />
-          <TextField label="Especialidad" value={form.especialidad} onChange={e => setForm({ ...form, especialidad: e.target.value })} fullWidth />
-          <TextField label="Título Profesional" value={form.titulo_profesional} onChange={e => setForm({ ...form, titulo_profesional: e.target.value })} fullWidth />
-          <TextField label="Fecha de contratación" type="date" value={form.fecha_contratacion} onChange={e => setForm({ ...form, fecha_contratacion: e.target.value })} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
-          <TextField label="Estado" select value={form.estado} onChange={e => setForm({ ...form, estado: e.target.value })} fullWidth>
+          <TextField label="Nombres" value={form.first_name} onChange={e => setForm(prev => ({ ...prev, first_name: e.target.value }))} fullWidth />
+          <TextField label="Apellidos" value={form.last_name} onChange={e => setForm(prev => ({ ...prev, last_name: e.target.value }))} fullWidth />
+          <TextField label="Email" type="email" value={form.email} onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))} fullWidth />
+          <TextField label="Documento" value={form.documento} onChange={e => setForm(prev => ({ ...prev, documento: e.target.value }))} fullWidth />
+          <TextField label="Especialidad" value={form.especialidad} onChange={e => setForm(prev => ({ ...prev, especialidad: e.target.value }))} fullWidth />
+          <TextField label="Título Profesional" value={form.titulo_profesional} onChange={e => setForm(prev => ({ ...prev, titulo_profesional: e.target.value }))} fullWidth />
+          <TextField label="Fecha de contratación" type="date" value={form.fecha_contratacion} onChange={e => setForm(prev => ({ ...prev, fecha_contratacion: e.target.value }))} fullWidth slotProps={{ inputLabel: { shrink: true } }} />
+          <TextField label="Estado" select value={form.estado} onChange={e => setForm(prev => ({ ...prev, estado: e.target.value }))} fullWidth>
             <MenuItem value="activo">Activo</MenuItem>
             <MenuItem value="inactivo">Inactivo</MenuItem>
           </TextField>
